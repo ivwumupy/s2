@@ -1,15 +1,21 @@
-#include "base/backtrace.h"
+#include "s2/base/backtrace.h"
 
 //
-#include "base/basic_types.h"
+#include "s2/base/basic_types.h"
+#include "s2/config.h"
 
 //
 #include <stdio.h>
 #include <string.h>
 
 //
+#if defined(S2_PLATFORM_MACOS)
 #include <dlfcn.h>
 #include <execinfo.h>
+#elif defined(S2_PLATFORM_WIN32)
+#include <Windows.h>
+#include <dbghelp.h>
+#endif
 
 namespace s2::base {
 namespace {
@@ -20,6 +26,7 @@ namespace {
 //   = <name[function]> <bare-function-type>
 //   | <name[data]>
 //   | <special-name>
+#if defined(S2_PLATFORM_MACOS)
 bool symbolize(void const* pc, char* buf, sint size) {
   Dl_info info;
   if (dladdr(pc, &info)) {
@@ -30,6 +37,8 @@ bool symbolize(void const* pc, char* buf, sint size) {
   }
   return false;
 }
+#elif defined(S2_PLATFORM_WIN32)
+#endif
 } // namespace
 
 // [NOTE]
@@ -40,6 +49,7 @@ bool symbolize(void const* pc, char* buf, sint size) {
 // So the address returned by `backtrace()` might point to the next symbol
 // following `foo()`.
 // One solution is to subtract 1 from the address.
+#if defined(S2_PLATFORM_MACOS)
 void print_backtrace() {
   void* entries[128];
   char symbol_buffer[256];
@@ -56,4 +66,13 @@ void print_backtrace() {
     printf("  # %p %s\n", entries[i], name);
   }
 }
+#elif defined(S2_PLATFORM_WIN32)
+void print_backtrace() {
+  void* entries[128];
+  sint count = CaptureStackBackTrace(0, 128, entries, nullptr);
+  for (sint i = 0; i < count; i++) {
+    printf("  # %p <unknown>\n", entries[i]);
+  }
+}
+#endif
 } // namespace s2::base

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base/basic_types.h"
+#include "s2/base/basic_types.h"
 
 namespace s2::base {
 class allocator {

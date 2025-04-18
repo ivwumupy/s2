@@ -1,7 +1,7 @@
 #pragma once
 
-#include "base/basic_types.h"
-#include "base/string_view.h"
+#include "s2/base/basic_types.h"
+#include "s2/base/string_view.h"
 
 namespace s2::base {
 // builtins:

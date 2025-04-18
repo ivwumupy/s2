@@ -1,5 +1,7 @@
 #pragma once
 
+#include "s2/config.h"
+
 namespace s2::base {
 
 using u8 = unsigned char;
@@ -18,8 +20,12 @@ using f64 = double;
 using sint = i64;
 
 namespace internal {
+#if defined(S2_PLATFORM_WIN32)
+using size_t = unsigned long long;
+#else
 using size_t = unsigned long;
-}
+#endif
+} // namespace internal
 
 } // namespace s2::base
 

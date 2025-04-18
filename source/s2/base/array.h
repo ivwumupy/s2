@@ -1,7 +1,7 @@
 #pragma once
 
-#include "base/allocator.h"
-#include "base/basic_types.h"
+#include "s2/base/allocator.h"
+#include "s2/base/basic_types.h"
 
 namespace s2::base {
 template <typename T> class array {

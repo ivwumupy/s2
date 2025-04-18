@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base/array.h"
+#include "s2/base/array.h"
 
 namespace s2::base {
 class string {

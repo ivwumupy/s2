@@ -1,5 +1,5 @@
-#include "base/panic.h"
-#include "base/string_view.h"
+#include "s2/base/panic.h"
+#include "s2/base/string_view.h"
 
 int main() {
   using namespace s2::base::literals;
