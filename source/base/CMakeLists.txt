@@ -1,7 +1,7 @@
 s2_add_library(
     NAME base
     PRIVATE
-        allocator.c
-        backtrace.c
-        panic.c
+        allocator.cc
+        backtrace.cc
+        panic.cc
 )

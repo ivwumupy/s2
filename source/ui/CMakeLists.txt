@@ -1,8 +1,9 @@
 s2_add_library(
   NAME ui
   PRIVATE
-    platform.c
-    platform_macos.m
+    platform.cc
+    platform_macos.mm
+    scene.cc
   DEPS
     base
 )

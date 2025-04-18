@@ -1,8 +1,8 @@
 s2_add_executable(
   NAME editor
   PRIVATE
-    main.c
+    main.cc
   DEPS
     base
-    ui
+    #ui
 )

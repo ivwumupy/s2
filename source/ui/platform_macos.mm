@@ -6,9 +6,16 @@
 //
 #import <AppKit/AppKit.h>
 
+// [SECTION] Obj-C Interfaces
+
+@interface s2_ApplicationDelegate : NSObject <NSApplicationDelegate>
+@end
+
+// [SECTION]
 typedef struct {
   sb_allocator_t alloc;
   NSApplication *app;
+  s2_ApplicationDelegate *delegate;
 } platform_t;
 
 typedef struct {
@@ -61,14 +68,28 @@ static su_platform_ops_t platform_ops = {
 
 su_platform_id su_create_appkit_platform(sb_allocator_t alloc) {
   NSApplication *app;
+  s2_ApplicationDelegate *delegate;
   platform_t *obj;
 
   app = [NSApplication sharedApplication];
   [app setActivationPolicy:NSApplicationActivationPolicyRegular];
 
+  delegate = [[s2_ApplicationDelegate alloc] init];
+  app.delegate = delegate;
+
   obj = sb_alloc(alloc, sizeof(platform_t));
   sb_check(obj);
   obj->alloc = alloc;
   obj->app = app;
+  obj->delegate = delegate;
   return (su_platform_id){obj, &platform_ops};
 }
+
+// [SECTION] Obj-C Implementations
+
+@implementation s2_ApplicationDelegate
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:
+    (NSApplication *)sender {
+  return YES;
+}
+@end
