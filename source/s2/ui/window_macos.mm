@@ -22,4 +22,5 @@ macos_window::macos_window(sint width, sint height) {
   [window_ makeKeyAndOrderFront:nil];
 }
 macos_window::~macos_window() { [window_ release]; }
+void macos_window::set_title() { [window_ setTitle:@"s2 engine"]; }
 } // namespace s2::ui

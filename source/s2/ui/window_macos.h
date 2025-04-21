@@ -7,10 +7,12 @@
 #import <AppKit/AppKit.h>
 
 namespace s2::ui {
-class macos_window : public window {
+class macos_window final : public window {
 public:
   macos_window(sint width, sint height);
   ~macos_window();
+
+  void set_title() override;
 
 private:
   NSWindow* window_;

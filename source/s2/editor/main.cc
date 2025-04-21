@@ -27,6 +27,7 @@ int main() {
   using namespace s2::base::literals;
   auto app = s2::ui::make_application();
   auto win = app->make_window(500, 500);
+  win->set_title();
   app->run();
   s2::base::panic("hello editor"_sv);
   s2::base::array<int> x{1, 2, 3};
