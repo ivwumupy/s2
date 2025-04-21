@@ -7,6 +7,7 @@ namespace s2::base {
 // builtins:
 //   const char *__builtin_FILE();
 //   unsigned __builtin_LINE();
+//   __builtin_strlen
 class source_location {
 public:
   static consteval source_location current(char const* file_ = __builtin_FILE(),

@@ -4,5 +4,5 @@ s2_add_executable(
     main.cc
   DEPS
     base
-    #ui
+    ui
 )

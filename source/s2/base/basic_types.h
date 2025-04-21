@@ -22,7 +22,7 @@ using sint = i64;
 namespace internal {
 #if defined(S2_PLATFORM_WIN32)
 using size_t = unsigned long long;
-#else
+#elif defined(S2_PLATFORM_MACOS)
 using size_t = unsigned long;
 #endif
 } // namespace internal

@@ -1,13 +1,16 @@
 s2_add_library(
   NAME ui
   PRIVATE
-    platform.cc
-    platform_macos.mm
-    scene.cc
+    application.cc
+  PRIVATE_MACOS
+    application_macos.mm
+    window_macos.mm
   DEPS
     base
 )
-target_link_libraries(ui
-  PRIVATE
-    ${FRAMEWORK_APP_KIT}
-)
+if(S2_IS_MACOS)
+  target_link_libraries(ui
+    PRIVATE
+      ${FRAMEWORK_APP_KIT}
+  )
+endif()
