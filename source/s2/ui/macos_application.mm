@@ -9,6 +9,7 @@ macos_application::macos_application() {
   [app_ setActivationPolicy:NSApplicationActivationPolicyRegular];
   ns_delegate_ = [[s2_ns_application_delegate alloc] init];
   app_.delegate = ns_delegate_;
+  render_manager_ = base::make_unique<macos_render_manager>();
 }
 macos_application::~macos_application() { [ns_delegate_ release]; }
 void macos_application::run() { [app_ run]; }

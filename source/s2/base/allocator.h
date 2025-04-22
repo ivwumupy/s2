@@ -9,5 +9,5 @@ public:
   virtual void* alloc(sint size) = 0;
   virtual void dealloc(void* ptr) = 0;
 };
-allocator& default_allocator();
+allocator* default_allocator();
 } // namespace s2::base

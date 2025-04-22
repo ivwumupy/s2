@@ -3,7 +3,7 @@
 namespace s2::ui {
 class window_delegate {
 public:
-  virtual ~window_delegate() {}
+  virtual ~window_delegate() = default;
 
   virtual void will_close() {}
   virtual bool should_close() { return true; }

@@ -5,12 +5,15 @@
 
 namespace s2::ui {
 class window;
+class render_manager;
 class application {
 public:
-  virtual ~application() {}
+  virtual ~application() = default;
 
   virtual void run() = 0;
   virtual base::unique_ptr<window> make_window(sint width, sint height) = 0;
+
+  virtual render_manager* get_render_manager() = 0;
 };
 base::unique_ptr<application> make_application();
 } // namespace s2::ui

@@ -9,8 +9,8 @@ public:
   void* alloc(sint size) override { return ::malloc(size); }
   void dealloc(void* ptr) override { ::free(ptr); }
 };
-allocator& default_allocator() {
+allocator* default_allocator() {
   static libc_allocator instance;
-  return instance;
+  return &instance;
 }
 } // namespace s2::base

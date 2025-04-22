@@ -17,7 +17,7 @@ public:
   constexpr array_storage() : begin_{nullptr}, end_{nullptr} {}
 
   array_storage(sint capacity) {
-    void* ptr = default_allocator().alloc(sizeof(T) * capacity);
+    void* ptr = default_allocator()->alloc(sizeof(T) * capacity);
     begin_ = reinterpret_cast<T*>(ptr);
     end_ = begin_ + capacity;
   }
@@ -53,7 +53,7 @@ public:
   }
 
 private:
-  void release() { default_allocator().dealloc(begin_); }
+  void release() { default_allocator()->dealloc(begin_); }
 
   T* begin_;
   T* end_;

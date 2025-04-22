@@ -6,7 +6,7 @@ class window {
 public:
   window() : delegate_{nullptr} {}
 
-  virtual ~window() {}
+  virtual ~window() = default;
 
   virtual void set_title() = 0;
 
