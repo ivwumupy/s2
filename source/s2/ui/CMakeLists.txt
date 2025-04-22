@@ -3,8 +3,8 @@ s2_add_library(
   PRIVATE
     application.cc
   PRIVATE_MACOS
-    application_macos.mm
-    window_macos.mm
+    macos_application.mm
+    macos_window.mm
   DEPS
     base
 )

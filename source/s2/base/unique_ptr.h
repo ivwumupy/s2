@@ -42,6 +42,8 @@ public:
     return ptr;
   }
 
+  T* get() { return ptr_; }
+
   void swap_with(unique_ptr& other) { swap(ptr_, other.ptr_); }
 
 private:
