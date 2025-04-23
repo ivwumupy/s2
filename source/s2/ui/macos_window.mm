@@ -4,6 +4,9 @@
 #include "s2/base/check.h"
 #include "s2/ui/window_delegate.h"
 
+//
+#import <QuartzCore/CoreAnimation.h>
+
 namespace s2::ui {
 macos_window::macos_window(sint width, sint height) {
   NSScreen* screen = [NSScreen mainScreen];
@@ -27,11 +30,29 @@ macos_window::macos_window(sint width, sint height) {
   window_.delegate = ns_delegate_;
   window_.releasedWhenClosed = false;
 
+  ns_view_ = [[s2_metal_view alloc] initWithBridge:this];
+  window_.contentView = ns_view_;
+
+  metal_layer_ = [CAMetalLayer layer];
+  // texture writes automatically have a linear->srgb transform.
+  metal_layer_.pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+  // TODO
+  metal_layer_.drawableSize = CGSizeMake(1000, 1000);
+  // We shall use a layer-hosting view.
+  //
+  // > One must set the `layer` property first and then set `wantsLayer`.
+  // > In a layer-hosting view, do not rely on the view for drawing.
+  // > Similarly, do not add subviews to a layer-hosting view.
+  //
+  ns_view_.layer = metal_layer_;
+  ns_view_.wantsLayer = true;
+
   [window_ makeKeyAndOrderFront:nil];
 }
 macos_window::~macos_window() {
-  [window_ release];
+  [ns_view_ release];
   [ns_delegate_ release];
+  [window_ release];
 }
 void macos_window::set_title() { [window_ setTitle:@"s2 engine"]; }
 void macos_window::ns_windowWillClose(NSNotification* notification) {
@@ -44,6 +65,10 @@ bool macos_window::ns_windowShouldClose(NSWindow* sender) {
     return delegate()->should_close();
   return true;
 }
+void macos_window::ns_viewDidChangeBackingProperties() {}
+void macos_window::ns_setFrameSize(NSSize newSize) {}
+void macos_window::ns_setBoundsSize(NSSize newSize) {}
+
 } // namespace s2::ui
 
 @implementation s2_ns_window_delegate {
@@ -61,5 +86,37 @@ bool macos_window::ns_windowShouldClose(NSWindow* sender) {
 }
 - (BOOL)windowShouldClose:(NSWindow*)sender {
   return bridge_->ns_windowShouldClose(sender);
+}
+@end
+
+@implementation s2_metal_view {
+  s2::ui::internal::ns_view_bridge* bridge_;
+}
+- (instancetype)initWithBridge:(s2::ui::internal::ns_view_bridge*)bridge {
+  self = [super init];
+  if (self) {
+    bridge_ = bridge;
+  }
+  return self;
+}
+- (void)mouseMoved:(NSEvent*)event {
+}
+- (void)mouseDown:(NSEvent*)event {
+}
+- (void)viewDidMoveToWindow {
+  [super viewDidMoveToWindow];
+}
+// Override all methods that indicate the view's size has changed.
+- (void)viewDidChangeBackingProperties {
+  [super viewDidChangeBackingProperties];
+  bridge_->ns_viewDidChangeBackingProperties();
+}
+- (void)setFrameSize:(NSSize)newSize {
+  [super setFrameSize:newSize];
+  bridge_->ns_setFrameSize(newSize);
+}
+- (void)setBoundsSize:(NSSize)newSize {
+  [super setBoundsSize:newSize];
+  bridge_->ns_setBoundsSize(newSize);
 }
 @end

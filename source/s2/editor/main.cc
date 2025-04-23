@@ -1,44 +1,40 @@
-#include "s2/base/array.h"
 #include "s2/ui/application.h"
-#include "s2/ui/view.h"
+#include "s2/ui/draw_batch.h"
+#include "s2/ui/render_manager.h"
 #include "s2/ui/window.h"
 #include "s2/ui/window_delegate.h"
 
-//
-#include <stdio.h>
-
 namespace s2::editor {
 namespace {
-class quad : public ui::view {};
-class vstack : public ui::view {
+class editor : public ui::window_delegate {
 public:
-  base::array<view*> children_;
-};
-class padding : public ui::view {
-public:
-  view* child_;
-};
-class border : public ui::view {
-public:
-  view* child_;
-};
-class delegate : public ui::window_delegate {
-public:
-  void will_close() override { printf("window is closing\n"); }
-  bool should_close() override {
-    printf("window should close?\n");
-    return true;
+  editor() {
+    app_ = ui::make_application();
+    win_ = app_->make_window(500, 500);
+    win_->set_title();
+    win_->set_delegate(this);
+    renderer_ = app_->get_render_manager();
+    renderer_->setup_window(win_.get());
+
+    ui::draw_batch b;
+    renderer_->render_batch(win_.get(), b);
   }
+
+  void run() { app_->run(); }
+
+  void will_close() override {}
+  bool should_close() override { return true; }
+
+private:
+  base::unique_ptr<ui::application> app_;
+  base::unique_ptr<ui::window> win_;
+  ui::render_manager* renderer_;
 };
 } // namespace
 } // namespace s2::editor
 
 int main() {
-  auto app = s2::ui::make_application();
-  auto win = app->make_window(500, 500);
-  win->set_title();
-  s2::editor::delegate d;
-  win->set_delegate(&d);
-  app->run();
+  s2::editor::editor e;
+  e.run();
   return 0;
 }

@@ -22,6 +22,7 @@ triangle_vout triangle_vertex(triangle_vin in [[stage_in]],
                               constant uniform_data const& uniform [[buffer(1)]]) {
   triangle_vout out;
   out.position = float4(in.position, 0.0, 1.0);
+  out.position.xy /= uniform.viewport_size / 2.0;
   out.color = float4(in.color) / float4(255.0);
   return out;
 }

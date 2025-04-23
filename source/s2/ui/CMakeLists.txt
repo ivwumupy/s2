@@ -15,6 +15,7 @@ if(S2_IS_MACOS)
   target_link_libraries(ui
     PRIVATE
       ${FRAMEWORK_APP_KIT}
+      ${FRAMEWORK_QUARTZ_CORE}
       ${FRAMEWORK_METAL}
   )
   add_custom_command(
