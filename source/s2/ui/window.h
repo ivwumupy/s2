@@ -10,6 +10,11 @@ public:
 
   virtual void set_title() = 0;
 
+  virtual void request_render() = 0;
+
+  virtual void start_animating() = 0;
+  virtual void stop_animating() = 0;
+
   window_delegate* delegate() { return delegate_; }
   void set_delegate(window_delegate* d) { delegate_ = d; }
 

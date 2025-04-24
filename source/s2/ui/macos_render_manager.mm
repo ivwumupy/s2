@@ -80,19 +80,18 @@ void macos_render_manager::setup_window(window* w) {
 }
 void macos_render_manager::render_batch(window* w, draw_batch const& b) {
   auto win = static_cast<macos_window*>(w);
-  auto layer = win->metal_layer();
 
   @autoreleasepool {
     auto cmdbuf = [queue_ commandBuffer];
-    auto drawable = [layer nextDrawable];
+    auto drawable = win->drawable();
     pass_desc_.colorAttachments[0].texture = drawable.texture;
     auto encoder = [cmdbuf renderCommandEncoderWithDescriptor:pass_desc_];
 
     static const internal::uniform_data uniform = {1000, 1000};
     static const internal::triangle_vertex vertices[] = {
-        {0, 0, 0x00ff0000}, {250, 0, 0x000000ff}, {250, 250, 0x0000ff00},
+        {0, 0, 0x00ff0000},    {250, 0, 0x000000ff}, {250, 250, 0x0000ff00},
 
-        {-250, 0, 0xffff0000}, {0, 0, 0xff0000ff}, {0, 250, 0xff00ff00},
+        {-250, 0, 0xffff0000}, {0, 0, 0xff0000ff},   {0, 250, 0xff00ff00},
     };
 
     [encoder setRenderPipelineState:triangle_pipeline_];

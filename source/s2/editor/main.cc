@@ -4,6 +4,9 @@
 #include "s2/ui/window.h"
 #include "s2/ui/window_delegate.h"
 
+//
+#include <stdio.h>
+
 namespace s2::editor {
 namespace {
 class editor : public ui::window_delegate {
@@ -15,9 +18,15 @@ public:
     win_->set_delegate(this);
     renderer_ = app_->get_render_manager();
     renderer_->setup_window(win_.get());
+    // win_->request_render();
+    win_->start_animating();
+  }
 
+  void render() override {
     ui::draw_batch b;
     renderer_->render_batch(win_.get(), b);
+    printf("render finish!\n");
+    win_->stop_animating();
   }
 
   void run() { app_->run(); }
