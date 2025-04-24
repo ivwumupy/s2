@@ -96,6 +96,8 @@ public:
   T* end() { return back_; }
   T const* end() const { return back_; }
 
+  sint size_in_bytes() const { return count() * sizeof(T); }
+
   void swap_with(array& other) { storage_.swap_with(other.storage_); }
 
 private:

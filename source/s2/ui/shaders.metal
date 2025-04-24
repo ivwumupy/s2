@@ -9,7 +9,8 @@ struct uniform_data {
 
 struct triangle_vin {
   float2 position [[attribute(0)]];
-  uchar4 color [[attribute(1)]];
+  // uchar4 color [[attribute(1)]];
+  float3 color [[attribute(1)]];
 };
 
 struct triangle_vout {
@@ -23,7 +24,8 @@ triangle_vout triangle_vertex(triangle_vin in [[stage_in]],
   triangle_vout out;
   out.position = float4(in.position, 0.0, 1.0);
   out.position.xy /= uniform.viewport_size / 2.0;
-  out.color = float4(in.color) / float4(255.0);
+  // out.color = float4(in.color) / float4(255.0);
+  out.color = float4(in.color, 1.0);
   return out;
 }
 

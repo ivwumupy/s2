@@ -1,6 +1,7 @@
 #include "s2/ui/macos_render_manager.h"
 
 //
+#include "s2/ui/draw_batch.h"
 #include "s2/ui/macos_shaders.h"
 #include "s2/ui/macos_window.h"
 
@@ -9,10 +10,6 @@ namespace internal {
 namespace {
 struct uniform_data {
   float viewport_size[2];
-};
-struct triangle_vertex {
-  float position[2];
-  base::u32 color;
 };
 } // namespace
 } // namespace internal
@@ -48,11 +45,11 @@ void macos_render_manager::init_pipelines() {
 
   auto vert_desc = [MTLVertexDescriptor vertexDescriptor];
   vert_desc.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
-  vert_desc.layouts[0].stride = 12; // float4 + uint32
+  vert_desc.layouts[0].stride = 20; // float2 + float3
   vert_desc.attributes[0].format = MTLVertexFormatFloat2;
   vert_desc.attributes[0].offset = 0;
   vert_desc.attributes[0].bufferIndex = 0;
-  vert_desc.attributes[1].format = MTLVertexFormatUChar4;
+  vert_desc.attributes[1].format = MTLVertexFormatFloat3;
   vert_desc.attributes[1].offset = 8;
   vert_desc.attributes[1].bufferIndex = 0;
   desc.vertexDescriptor = vert_desc;
@@ -71,7 +68,9 @@ void macos_render_manager::init_pass_desc() {
   pass_desc_ = [[MTLRenderPassDescriptor alloc] init];
   pass_desc_.colorAttachments[0].loadAction = MTLLoadActionClear;
   pass_desc_.colorAttachments[0].storeAction = MTLStoreActionStore;
-  pass_desc_.colorAttachments[0].clearColor = MTLClearColorMake(0, 1, 1, 1);
+  pass_desc_.colorAttachments[0].clearColor =
+      MTLClearColorMake(0.3, 0.3, 0.3, 1);
+  // pass_desc_.colorAttachments[0].clearColor = MTLClearColorMake(0, 1, 1, 1);
 }
 void macos_render_manager::setup_window(window* w) {
   auto win = static_cast<macos_window*>(w);
@@ -80,6 +79,13 @@ void macos_render_manager::setup_window(window* w) {
 }
 void macos_render_manager::render_batch(window* w, draw_batch const& b) {
   auto win = static_cast<macos_window*>(w);
+  auto drawable_size = win->drawable_size();
+
+  auto vertex_buffer =
+      [device_ newBufferWithBytes:b.vertices.begin()
+                           length:b.vertices.size_in_bytes()
+                          options:MTLResourceStorageModeShared |
+                                  MTLResourceCPUCacheModeWriteCombined];
 
   @autoreleasepool {
     auto cmdbuf = [queue_ commandBuffer];
@@ -87,24 +93,47 @@ void macos_render_manager::render_batch(window* w, draw_batch const& b) {
     pass_desc_.colorAttachments[0].texture = drawable.texture;
     auto encoder = [cmdbuf renderCommandEncoderWithDescriptor:pass_desc_];
 
-    static const internal::uniform_data uniform = {1000, 1000};
-    static const internal::triangle_vertex vertices[] = {
-        {0, 0, 0x00ff0000},    {250, 0, 0x000000ff}, {250, 250, 0x0000ff00},
-
-        {-250, 0, 0xffff0000}, {0, 0, 0xff0000ff},   {0, 250, 0xff00ff00},
-    };
+    internal::uniform_data uniform = {static_cast<float>(drawable_size.width),
+                                      static_cast<float>(drawable_size.height)};
 
     [encoder setRenderPipelineState:triangle_pipeline_];
-    [encoder setVertexBytes:&vertices length:sizeof(vertices) atIndex:0];
+    [encoder setVertexBuffer:vertex_buffer offset:0 atIndex:0];
     [encoder setVertexBytes:&uniform length:sizeof(uniform) atIndex:1];
 
     [encoder drawPrimitives:MTLPrimitiveTypeTriangle
                 vertexStart:0
-                vertexCount:6];
+                vertexCount:b.vertices.count()];
 
     [encoder endEncoding];
     [cmdbuf presentDrawable:drawable];
     [cmdbuf commit];
   }
+
+  [vertex_buffer release];
 }
 } // namespace s2::ui
+
+// [SECTION] Notes
+//
+// https://developer.apple.com/documentation/metal/choosing-a-resource-storage-mode-for-apple-gpus?language=objc
+//
+// The storage mode you choose depends on how you plan to use Metal resources:
+//
+// 1. Populate and update on the CPU
+//    Data shared by the CPU and GPU. Use MTLStorageModeShared. The CPU and GPU
+//    share data. This is the default for buffer and texture storage.
+// 2. Access exclusively on the GPU
+//    Data owned by the GPU. Use MTLStorageModePrivate. Choose the mode if you
+//    populate your resource with the GPU through a compute, render, or blit
+//    pass. This case is common for render targets, intermediary resources, or
+//    texture streaming. For guidance on how to copy data to a private resource,
+//    see Copying Data to a Private Resource.
+// 3. Populate on CPU and access frequently on GPU
+//    Shared integrated memory for the CPU and GPU. Use MTLStorageModeShared.
+// 4. Temporary texture contents for GPU passes
+//    Memory held by the GPU for textures within or between passes. Use
+//    MTLStorageModeMemoryless. Memoryless mode only works for textures, and
+//    stores temporary resources in tiled memory for high performance. An
+//    example is a depth or stencil texture thatʼs used only within a single
+//    pass and isnʼt needed in an earlier or later rendering stage.
+//

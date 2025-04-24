@@ -100,9 +100,9 @@ void macos_window::ns_viewDidMoveToWindow() {
   s2_check(ns_view_.window == window_);
   setup_display_link();
 }
-void macos_window::ns_viewDidChangeBackingProperties() {}
-void macos_window::ns_setFrameSize(NSSize newSize) {}
-void macos_window::ns_setBoundsSize(NSSize newSize) {}
+void macos_window::ns_viewDidChangeBackingProperties() { resize_drawable(); }
+void macos_window::ns_setFrameSize(NSSize newSize) { resize_drawable(); }
+void macos_window::ns_setBoundsSize(NSSize newSize) { resize_drawable(); }
 void macos_window::ca_metalDisplayLink_needsUpdate(
     CAMetalDisplayLink* link, CAMetalDisplayLinkUpdate* update) {
   s2_check(link == display_link_);
@@ -125,6 +125,16 @@ void macos_window::setup_display_link() {
   display_link_.delegate = ns_view_;
   [display_link_ addToRunLoop:[NSRunLoop mainRunLoop]
                       forMode:NSRunLoopCommonModes];
+}
+void macos_window::resize_drawable() {
+  auto scale = window_.backingScaleFactor;
+  CGSize new_size = CGSizeMake(width_ * scale, height_ * scale);
+  if (new_size.width <= 0 || new_size.height >= 0)
+    return;
+  if (new_size.width == metal_layer_.drawableSize.width &&
+      new_size.height == metal_layer_.drawableSize.height)
+    return;
+  metal_layer_.drawableSize = new_size;
 }
 } // namespace s2::ui
 

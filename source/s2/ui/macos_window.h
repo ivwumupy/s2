@@ -72,12 +72,16 @@ public:
 
   id<CAMetalDrawable> drawable() { return drawable_; }
 
+  CGSize drawable_size() { return metal_layer_.drawableSize; }
+
 private:
   void init_window();
   void init_layer();
   void init_view();
 
   void setup_display_link();
+
+  void resize_drawable();
 
   NSWindow* window_ = nullptr;
   s2_ns_window_delegate* ns_delegate_ = nullptr;
@@ -87,8 +91,8 @@ private:
   // CADisplayLink* display_link_ = nullptr;
   id<CAMetalDrawable> drawable_ = nullptr;
 
-  float width_;
-  float height_;
+  CGFloat width_;
+  CGFloat height_;
   bool animating_ = false;
 };
 } // namespace s2::ui

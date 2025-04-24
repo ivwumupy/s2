@@ -99,7 +99,7 @@ class View {
     this.repaint = false;
   }
   paint(ctx) {}
-  preferredSize(proposal) {
+  measure(proposal) {
     return makeSize(0, 0);
   }
   requestRepaint() {
@@ -127,11 +127,11 @@ class VStack extends View {
     }
     ctx.pop();
   }
-  preferredSize(proposal) {
+  measure(proposal) {
     let w = 0;
     let h = 0;
     for (const child of this.children) {
-      const size = child.preferredSize(proposal);
+      const size = child.measure(proposal);
       h += size.h;
       w = Math.max(w, size.w);
     }
@@ -141,7 +141,7 @@ class VStack extends View {
     let x = 0;
     let y = 0;
     for (const child of this.children) {
-      const size = child.preferredSize(this.bounds);
+      const size = child.measure(this.bounds);
       child.bounds = makeRect(x, y, size.w, size.h);
       child.layout();
       y += size.h;
@@ -160,7 +160,7 @@ class QuadView extends View {
     const { x, y, w, h } = this.bounds;
     ctx.fill_quad(x, y, w, h, this.c);
   }
-  preferredSize(proposal) {
+  measure(proposal) {
     return this.size;
   }
 }
@@ -180,8 +180,8 @@ class BorderView extends View {
     const { x, y, w, h } = this.bounds;
     ctx.stroke_quad(x, y, w, h, "red");
   }
-  preferredSize(proposal) {
-    return this.child.preferredSize(proposal);
+  measure(proposal) {
+    return this.child.measure(proposal);
   }
   layout() {
     this.child.bounds = makeRect(0, 0, this.bounds.w, this.bounds.h);
@@ -194,7 +194,7 @@ class VSpace extends View {
     super();
     this.h = h;
   }
-  preferredSize(proposal) {
+  measure(proposal) {
     return makeSize(proposal.w, this.h);
   }
 }
@@ -206,8 +206,8 @@ class Padding extends View {
     this.child = child;
     child.parent = this;
   }
-  preferredSize(proposal) {
-    const { w, h } = this.child.preferredSize(
+  measure(proposal) {
+    const { w, h } = this.child.measure(
       makeSize(proposal.w - 2 * this.p, proposal.h - 2 * this.p),
     );
     return makeSize(w + 2 * this.p, h + 2 * this.p);
@@ -236,7 +236,7 @@ class TextView extends View {
     this.text = text;
     this.size = null;
   }
-  preferredSize(proposal) {
+  measure(proposal) {
     if (this.size) {
       return this.size;
     }
@@ -273,7 +273,10 @@ document.addEventListener("DOMContentLoaded", function () {
   view.add_child(new BorderView(new QuadView(100, 100, "yellow")));
   view.add_child(
     new BorderView(
-      new Padding(10, new BorderView(new TextView("hello, world! this is a TextView."))),
+      new Padding(
+        10,
+        new BorderView(new TextView("hello, world! this is a TextView.")),
+      ),
     ),
   );
 
@@ -287,7 +290,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const pctx = new PaintContext(ctx);
 
-    const size = view.preferredSize(makeSize(canvas.width, canvas.height));
+    const size = view.measure(makeSize(canvas.width, canvas.height));
     view.bounds = makeRect(0, 0, size.w, size.h);
     view.layout();
 
