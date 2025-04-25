@@ -24,6 +24,7 @@ private:
   id<MTLLibrary> shaders_;
 
   id<MTLRenderPipelineState> triangle_pipeline_;
+  id<MTLRenderPipelineState> color_wheel_pipeline_;
 
   MTLRenderPassDescriptor* pass_desc_;
 };

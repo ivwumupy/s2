@@ -1,1 +1,3 @@
 PointerAlignment: Left
+MacroBlockBegin: "s2_view_builder_begin"
+MacroBlockEnd: "s2_view_builder_end"

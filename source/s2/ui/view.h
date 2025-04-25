@@ -37,10 +37,10 @@ public:
 
   template <typename T, typename... Args>
     requires(base::is_derived_from<T, view>)
-  T* make_view(Args&&... args) {
+  T::builder_type make_view(Args&&... args) {
     void* ptr = base::default_allocator()->alloc(sizeof(T));
     T* v = base::construct_at<T>(ptr, base::forward<Args>(args)...);
-    return v;
+    return typename T::builder_type{v};
   }
 
 private:

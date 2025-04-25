@@ -1,6 +1,7 @@
 #include "s2/ui/application.h"
 #include "s2/ui/draw_batch.h"
 #include "s2/ui/render_manager.h"
+#include "s2/ui/text_manager.h"
 #include "s2/ui/view.h"
 #include "s2/ui/view_host.h"
 #include "s2/ui/views/views.h"
@@ -50,6 +51,11 @@ public:
     renderer_ = app_->get_render_manager();
     renderer_->setup_window(win_.get());
 
+    tm_ = app_->get_text_manager();
+    font_ = tm_->default_font();
+
+    printf("info: default_font: glphy_count = %ld\n", font_->glyph_count());
+
     build_batch();
   }
 
@@ -63,9 +69,6 @@ public:
     win_->start_animating();
     app_->run();
   }
-
-  void will_close() override {}
-  bool should_close() override { return true; }
 
 private:
   void build_batch() {
@@ -93,6 +96,8 @@ private:
   base::unique_ptr<ui::application> app_;
   base::unique_ptr<ui::window> win_;
   ui::render_manager* renderer_;
+  ui::text_manager* tm_;
+  ui::font* font_;
   ui::draw_batch batch_;
   ui::view_host host_;
 };
@@ -100,7 +105,13 @@ class counter_view : public ui::view {
 public:
   counter_view() {
     using namespace ui::views;
-    root_ = make_view<vstack>();
+    // clang-format off
+    root_ =
+      make_view<vstack>()
+        .child()
+        .spacing(5)
+        .build();
+    // clang-format on
   }
 
 private:

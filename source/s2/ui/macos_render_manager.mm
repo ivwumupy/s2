@@ -23,6 +23,7 @@ macos_render_manager::macos_render_manager() {
 macos_render_manager::~macos_render_manager() {
   [pass_desc_ release];
   [triangle_pipeline_ release];
+  [color_wheel_pipeline_ release];
   [shaders_ release];
   [queue_ release];
   [device_ release];
@@ -37,31 +38,63 @@ void macos_render_manager::init_shaders() {
 }
 void macos_render_manager::init_pipelines() {
   auto desc = [[MTLRenderPipelineDescriptor alloc] init];
-  // triangle pipeline
-  auto triangle_vertex = [shaders_ newFunctionWithName:@"triangle_vertex"];
-  auto triangle_fragment = [shaders_ newFunctionWithName:@"triangle_fragment"];
-  desc.vertexFunction = triangle_vertex;
-  desc.fragmentFunction = triangle_fragment;
-
-  auto vert_desc = [MTLVertexDescriptor vertexDescriptor];
-  vert_desc.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
-  vert_desc.layouts[0].stride = 20; // float2 + float3
-  vert_desc.attributes[0].format = MTLVertexFormatFloat2;
-  vert_desc.attributes[0].offset = 0;
-  vert_desc.attributes[0].bufferIndex = 0;
-  vert_desc.attributes[1].format = MTLVertexFormatFloat3;
-  vert_desc.attributes[1].offset = 8;
-  vert_desc.attributes[1].bufferIndex = 0;
-  desc.vertexDescriptor = vert_desc;
-
   desc.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
 
   NSError* error;
-  triangle_pipeline_ = [device_ newRenderPipelineStateWithDescriptor:desc
-                                                               error:&error];
+  // triangle pipeline
+  {
+    auto triangle_vertex = [shaders_ newFunctionWithName:@"triangle_vertex"];
+    auto triangle_fragment =
+        [shaders_ newFunctionWithName:@"triangle_fragment"];
+    desc.vertexFunction = triangle_vertex;
+    desc.fragmentFunction = triangle_fragment;
 
-  [triangle_vertex release];
-  [triangle_fragment release];
+    auto vert_desc = [MTLVertexDescriptor vertexDescriptor];
+    vert_desc.layouts[1].stepFunction = MTLVertexStepFunctionPerVertex;
+    vert_desc.layouts[1].stride = 20; // float2 + float3
+    vert_desc.attributes[0].format = MTLVertexFormatFloat2;
+    vert_desc.attributes[0].offset = 0;
+    vert_desc.attributes[0].bufferIndex = 1;
+    vert_desc.attributes[1].format = MTLVertexFormatFloat3;
+    vert_desc.attributes[1].offset = 8;
+    vert_desc.attributes[1].bufferIndex = 1;
+    desc.vertexDescriptor = vert_desc;
+
+    triangle_pipeline_ = [device_ newRenderPipelineStateWithDescriptor:desc
+                                                                 error:&error];
+
+    [triangle_vertex release];
+    [triangle_fragment release];
+  }
+
+  // color wheel pipeline
+  {
+    auto color_wheel_vertex =
+        [shaders_ newFunctionWithName:@"color_wheel_vertex"];
+    auto color_wheel_fragment =
+        [shaders_ newFunctionWithName:@"color_wheel_fragment"];
+    desc.vertexFunction = color_wheel_vertex;
+    desc.fragmentFunction = color_wheel_fragment;
+
+    auto vert_desc = [MTLVertexDescriptor vertexDescriptor];
+    vert_desc.layouts[1].stepFunction = MTLVertexStepFunctionPerVertex;
+    vert_desc.layouts[1].stride = 8; // float2 + float3
+    vert_desc.attributes[0].format = MTLVertexFormatFloat2;
+    vert_desc.attributes[0].offset = 0;
+    vert_desc.attributes[0].bufferIndex = 1;
+    desc.vertexDescriptor = vert_desc;
+
+    desc.colorAttachments[0].blendingEnabled = true;
+    desc.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+    desc.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+
+    color_wheel_pipeline_ =
+        [device_ newRenderPipelineStateWithDescriptor:desc error:&error];
+
+    [color_wheel_vertex release];
+    [color_wheel_fragment release];
+  }
+
   [desc release];
 }
 void macos_render_manager::init_pass_desc() {
@@ -97,12 +130,35 @@ void macos_render_manager::render_batch(window* w, draw_batch const& b) {
                                       static_cast<float>(drawable_size.height)};
 
     [encoder setRenderPipelineState:triangle_pipeline_];
-    [encoder setVertexBuffer:vertex_buffer offset:0 atIndex:0];
-    [encoder setVertexBytes:&uniform length:sizeof(uniform) atIndex:1];
+    [encoder setVertexBytes:&uniform length:sizeof(uniform) atIndex:0];
+    [encoder setVertexBuffer:vertex_buffer offset:0 atIndex:1];
 
     [encoder drawPrimitives:MTLPrimitiveTypeTriangle
                 vertexStart:0
                 vertexCount:b.vertices.count()];
+
+    static constexpr struct {
+      float pos[2];
+    } unit_vertices[] = {
+        {0, 0}, {1, 0}, {1, 1}, {0, 0}, {1, 1}, {0, 1},
+    };
+    static constexpr struct {
+      float center[2];
+      float radius[2];
+    } wheel_data = {
+        {0, 0},
+        {200, 250},
+    };
+    // color wheel
+    [encoder setRenderPipelineState:color_wheel_pipeline_];
+    [encoder setVertexBytes:&unit_vertices
+                     length:sizeof(unit_vertices)
+                    atIndex:1];
+    [encoder setVertexBytes:&wheel_data length:sizeof(wheel_data) atIndex:2];
+    [encoder setFragmentBytes:&wheel_data length:sizeof(wheel_data) atIndex:0];
+    [encoder drawPrimitives:MTLPrimitiveTypeTriangle
+                vertexStart:0
+                vertexCount:6];
 
     [encoder endEncoding];
     [cmdbuf presentDrawable:drawable];
