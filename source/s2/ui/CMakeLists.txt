@@ -8,6 +8,8 @@ s2_add_library(
     macos_render_manager.mm
     macos_text_manager.mm
     macos_window.mm
+  PRIVATE_WINDOWS
+    win32_application.cc
   DEPS
     base
 )
