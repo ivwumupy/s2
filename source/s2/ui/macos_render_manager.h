@@ -1,5 +1,6 @@
 #pragma once
 
+#include "s2/base/array.h"
 #include "s2/ui/render_manager.h"
 
 //

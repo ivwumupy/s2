@@ -1,0 +1,9 @@
+action("metal_shaders_h") {
+  sources = [ "macos_shaders.metal" ]
+  outputs = [ "$target_gen_dir/macos_shaders.h" ]
+  script = "compile_shader.py"
+  args = [
+    "--out", rebase_path(target_gen_dir, root_build_dir),
+    "--var-name", "s2_ui_macos_shaders",
+  ] + rebase_path(sources, root_build_dir)
+}

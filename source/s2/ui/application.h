@@ -12,7 +12,7 @@ public:
   virtual ~application() = default;
 
   virtual void run() = 0;
-  virtual base::unique_ptr<window> make_window(sint width, sint height) = 0;
+  virtual base::unique_ptr<window> make_window(usize width, usize height) = 0;
 
   virtual render_manager* get_render_manager() = 0;
   virtual text_manager* get_text_manager() = 0;

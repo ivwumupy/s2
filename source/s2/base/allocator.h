@@ -5,9 +5,23 @@
 namespace s2::base {
 class allocator {
 public:
-  virtual ~allocator() = default;
-  virtual void* alloc(sint size) = 0;
-  virtual void dealloc(void* ptr) = 0;
+  constexpr virtual ~allocator() = default;
+  constexpr virtual void* alloc(usize size) = 0;
+  constexpr virtual void dealloc(void* ptr) = 0;
 };
-allocator* default_allocator();
+namespace internal {
+allocator* runtime_default_allocator();
+class comptime_allocator final : public allocator {
+public:
+  void* alloc([[maybe_unused]] usize size) override { return nullptr; }
+  void dealloc([[maybe_unused]] void* ptr) override {}
+};
+} // namespace internal
+inline constexpr allocator* default_allocator() {
+  if consteval {
+    return new internal::comptime_allocator;
+  } else {
+    return internal::runtime_default_allocator();
+  }
+}
 } // namespace s2::base

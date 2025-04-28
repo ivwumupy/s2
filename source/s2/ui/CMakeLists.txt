@@ -3,6 +3,7 @@ s2_add_library(
   PRIVATE
     application.cc
     draw_batch.cc
+    view.cc
   PRIVATE_MACOS
     macos_application.mm
     macos_render_manager.mm

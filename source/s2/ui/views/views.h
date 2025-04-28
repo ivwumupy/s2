@@ -23,7 +23,7 @@ class vstack : public view {
   s2_view_builder_begin(vstack)
     vstack_builder& child() { return *this; }
     s2_view_builder_field_with_default(float, spacing, 10)
-  s2_view_builder_end();
+  s2_view_builder_end()
 
 public:
   using builder_type = vstack_builder;
@@ -35,9 +35,11 @@ class quad : public view {
 public:
   quad(rect_size size) : size_{size} {}
 
-  rect_size measure(size_proposal proposal) override { return size_; }
+  rect_size measure([[maybe_unused]] size_proposal proposal) override {
+    return size_;
+  }
 
-  void paint(paint_context& ctx) override { ctx.add_rect(); }
+  void paint(draw_list& list) override { list.add_rect(); }
 
 private:
   rect_size size_;

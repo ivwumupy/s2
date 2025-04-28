@@ -12,11 +12,11 @@ public:
   macos_font(CTFontRef f);
   ~macos_font();
 
-  sint glyph_count() const { return glyph_count_; }
+  usize glyph_count() const { return glyph_count_; }
 
 private:
   CTFontRef font_;
-  sint glyph_count_;
+  usize glyph_count_;
 };
 class macos_text_manager final : public text_manager {
 public:
@@ -24,6 +24,8 @@ public:
   ~macos_text_manager();
 
   font* default_font() override { return default_font_.get(); }
+
+  shaped_line shape_line(base::string_view s) override;
 
 private:
   void create_default_font();

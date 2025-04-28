@@ -1,0 +1,32 @@
+static_library("s2") {
+  sources = [
+    "base/allocator.cc",
+    "base/backtrace.cc",
+    "base/panic.cc",
+    "ui/application.cc",
+    "ui/draw_batch.cc",
+    "ui/view.cc",
+  ] + [
+    "ui/macos_application.mm",
+    "ui/macos_render_manager.mm",
+    "ui/macos_text_manager.mm",
+    "ui/macos_window.mm",
+  ]
+  deps = [
+    "//source/s2/ui:metal_shaders_h",
+  ]
+}
+
+executable("editor") {
+  sources = [
+    "editor/main.cc",
+  ]
+  deps = [
+    ":s2",
+  ]
+  frameworks = [
+    "AppKit.framework",
+    "QuartzCore.framework",
+    "Metal.framework",
+  ]
+}

@@ -1,3 +1,4 @@
+#include "s2/base/inline_array.h"
 #include "s2/ui/application.h"
 #include "s2/ui/draw_batch.h"
 #include "s2/ui/render_manager.h"
@@ -14,7 +15,7 @@
 
 namespace s2::editor {
 namespace {
-inline constexpr float pi = 3.1415926535;
+inline constexpr float pi = 3.1415926535f;
 struct color {
   float r;
   float g;
@@ -72,13 +73,13 @@ public:
 
 private:
   void build_batch() {
-    sint N = 96;
+    usize N = 96;
     float r = 350;
     float R = 400;
-    float theta = 2 * pi / N;
-    for (sint i = 0; i < N; i++) {
-      float a0 = (i - 0.5) * theta;
-      float a1 = (i + 0.5) * theta;
+    float theta = 2 * pi / static_cast<float>(N);
+    for (usize i = 0; i < N; i++) {
+      float a0 = (static_cast<float>(i) - 0.5f) * theta;
+      float a1 = (static_cast<float>(i) + 0.5f) * theta;
       float x0 = r * cosf(a0);
       float y0 = r * sinf(a0);
       float x1 = R * cosf(a0);
@@ -87,7 +88,7 @@ private:
       float y2 = r * sinf(a1);
       float x3 = R * cosf(a1);
       float y3 = R * sinf(a1);
-      auto c = color::from_hue(i * theta);
+      auto c = color::from_hue(static_cast<float>(i) * theta);
       batch_.add_triangle(x0, y0, x1, y1, x2, y2, c.r, c.g, c.b);
       batch_.add_triangle(x3, y3, x2, y2, x1, y1, c.r, c.g, c.b);
     }
@@ -120,7 +121,19 @@ private:
 } // namespace
 } // namespace s2::editor
 
+void test_comptime() { using namespace s2;
+  printf("max = %lu\n", base::numeric_limits<usize>::max);
+  printf("min = %lu\n", base::numeric_limits<usize>::min);
+}
+
 int main() {
+  test_comptime();
+
+  constexpr auto x = s2::base::make_integers<3>();
+  for (auto i : x) {
+    printf("arr => %lu\n", i);
+  }
+
   s2::editor::editor e;
   e.run();
   return 0;

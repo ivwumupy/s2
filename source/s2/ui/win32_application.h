@@ -9,7 +9,7 @@ public:
   ~win32_application();
 
   void run() override;
-  base::unique_ptr<window> make_window(sint width, sint height) override;
+  base::unique_ptr<window> make_window(usize width, usize height) override;
 
   render_manager* get_render_manager() override;
   text_manager* get_text_manager() override;

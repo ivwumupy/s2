@@ -2,6 +2,7 @@
 
 #include "s2/base/allocator.h"
 #include "s2/base/basic_types.h"
+#include "s2/base/checked_convert.h"
 #include "s2/base/construct.h"
 #include "s2/base/initializer_list.h"
 #include "s2/base/move.h"
@@ -16,7 +17,7 @@ template <typename T> class array_storage {
 public:
   constexpr array_storage() : begin_{nullptr}, end_{nullptr} {}
 
-  array_storage(sint capacity) {
+  array_storage(usize capacity) {
     void* ptr = default_allocator()->alloc(sizeof(T) * capacity);
     begin_ = reinterpret_cast<T*>(ptr);
     end_ = begin_ + capacity;
@@ -43,7 +44,7 @@ public:
   T* end() { return end_; }
   T const* end() const { return end_; }
 
-  sint capacity() const { return end_ - begin_; }
+  usize capacity() const { return checked_convert<usize>(end_ - begin_); }
 
   bool is_empty() const { return begin_ == nullptr; }
 
@@ -64,7 +65,7 @@ template <typename T> class array {
 
 public:
   array() : back_{nullptr} {}
-  array(initializer_list<T> l) {
+  array([[maybe_unused]] initializer_list<T> l) {
     using namespace literals;
     panic("todo"_sv);
   }
@@ -88,22 +89,24 @@ public:
     back_++;
   }
 
-  sint capacity() const { return storage_.capacity(); }
-  sint count() const { return back_ - storage_.begin(); }
+  usize capacity() const { return storage_.capacity(); }
+  usize count() const {
+    return checked_convert<usize>(back_ - storage_.begin());
+  }
 
   T* begin() { return storage_.begin(); }
   T const* begin() const { return storage_.begin(); }
   T* end() { return back_; }
   T const* end() const { return back_; }
 
-  sint size_in_bytes() const { return count() * sizeof(T); }
+  usize size_in_bytes() const { return count() * sizeof(T); }
 
   void swap_with(array& other) { storage_.swap_with(other.storage_); }
 
 private:
   // Grow the array such that capacity > c.
-  void grow(sint c) {
-    sint nc = 2 * capacity();
+  void grow(usize c) {
+    usize nc = 2 * capacity();
     if (nc < c)
       nc = c;
     storage_type ns{nc};

@@ -27,7 +27,7 @@ namespace {
 //   | <name[data]>
 //   | <special-name>
 #if defined(S2_PLATFORM_MACOS)
-bool symbolize(void const* pc, char* buf, sint size) {
+bool symbolize(void const* pc, char* buf, usize size) {
   Dl_info info;
   if (dladdr(pc, &info)) {
     if (strlen(info.dli_sname) < size) {
@@ -53,9 +53,9 @@ bool symbolize(void const* pc, char* buf, sint size) {
 void print_backtrace() {
   void* entries[128];
   char symbol_buffer[256];
-  sint count = backtrace(entries, 128);
+  int count = backtrace(entries, 128);
   char const* name;
-  for (sint i = 0; i < count; i++) {
+  for (int i = 0; i < count; i++) {
     // See the note above.
     void const* addr = static_cast<char const*>(entries[i]) - 1;
     if (symbolize(addr, symbol_buffer, 256)) {
@@ -69,8 +69,8 @@ void print_backtrace() {
 #elif defined(S2_PLATFORM_WIN32)
 void print_backtrace() {
   void* entries[128];
-  sint count = CaptureStackBackTrace(0, 128, entries, nullptr);
-  for (sint i = 0; i < count; i++) {
+  usize count = CaptureStackBackTrace(0, 128, entries, nullptr);
+  for (usize i = 0; i < count; i++) {
     printf("  # %p <unknown>\n", entries[i]);
   }
 }

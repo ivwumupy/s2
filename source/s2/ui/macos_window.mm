@@ -5,7 +5,7 @@
 #include "s2/ui/window_delegate.h"
 
 namespace s2::ui {
-macos_window::macos_window(sint width, sint height)
+macos_window::macos_window(usize width, usize height)
     : width_{static_cast<float>(width)}, height_{static_cast<float>(height)} {
   init_window();
   init_layer();
@@ -80,7 +80,7 @@ void macos_window::stop_animating() {
   }
   animating_ = false;
 }
-void macos_window::ns_windowWillClose(NSNotification* notification) {
+void macos_window::ns_windowWillClose([[maybe_unused]] NSNotification* notification) {
   if (delegate())
     delegate()->will_close();
 }
@@ -90,7 +90,7 @@ bool macos_window::ns_windowShouldClose(NSWindow* sender) {
     return delegate()->should_close();
   return true;
 }
-void macos_window::ns_render(CADisplayLink* sender) {
+void macos_window::ns_render([[maybe_unused]] CADisplayLink* sender) {
   s2_check(false);
   // s2_check(sender == display_link_);
   // if (delegate())
@@ -101,8 +101,8 @@ void macos_window::ns_viewDidMoveToWindow() {
   setup_display_link();
 }
 void macos_window::ns_viewDidChangeBackingProperties() { resize_drawable(); }
-void macos_window::ns_setFrameSize(NSSize newSize) { resize_drawable(); }
-void macos_window::ns_setBoundsSize(NSSize newSize) { resize_drawable(); }
+void macos_window::ns_setFrameSize([[maybe_unused]] NSSize newSize) { resize_drawable(); }
+void macos_window::ns_setBoundsSize([[maybe_unused]] NSSize newSize) { resize_drawable(); }
 void macos_window::ca_metalDisplayLink_needsUpdate(
     CAMetalDisplayLink* link, CAMetalDisplayLinkUpdate* update) {
   s2_check(link == display_link_);

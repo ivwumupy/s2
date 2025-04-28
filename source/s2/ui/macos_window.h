@@ -46,7 +46,7 @@ class macos_window final : public window,
                            public internal::s2_ns_window_delegate_bridge,
                            public internal::s2_metal_view_bridge {
 public:
-  macos_window(sint width, sint height);
+  macos_window(usize width, usize height);
   ~macos_window();
 
   void render();

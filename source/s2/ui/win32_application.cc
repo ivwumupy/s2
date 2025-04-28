@@ -11,8 +11,8 @@ base::unique_ptr<application> make_win32_application() {
 win32_application::win32_application() {}
 win32_application::~win32_application() {}
 void win32_application::run() {}
-base::unique_ptr<window> win32_application::make_window(sint width,
-                                                        sint height) {
+base::unique_ptr<window> win32_application::make_window(usize width,
+                                                        usize height) {
   using namespace base::literals;
   base::panic("todo"_sv);
   return nullptr;

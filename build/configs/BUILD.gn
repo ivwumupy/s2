@@ -1,0 +1,50 @@
+import("//build/configs/sysroot.gni")
+
+config("basics") {
+  cflags = []
+  cflags_cc = []
+  cflags_objcc = []
+  ldflags = []
+  include_dirs = []
+
+  cflags += [ "-fcolor-diagnostics" ]
+  #ldflags += [
+  #  "-fuse-ld=lld",
+  #  "-Wl,--color-diagnostics",
+  #]
+
+  include_dirs = [
+    "//source",
+    "$root_gen_dir/source",
+  ]
+
+  cflags += [ "-O0" ]
+
+  cflags_cc += [ "-std=c++26" ]
+  cflags_objcc += [ "-std=c++26" ]
+
+  cflags += [
+    "-pedantic-errors",
+    "-Wall",
+    "-Wextra",
+    "-Wconversion",
+  ]
+
+  cflags_cc += [ "-fno-exceptions" ]
+  cflags_cc += [ "-fno-rtti" ]
+
+  if (is_macos) {
+    sysroot_flags = [
+      "-isysroot",
+      rebase_path(sysroot, root_build_dir),
+    ]
+    cflags += sysroot_flags
+    ldflags += sysroot_flags
+  }
+
+  # workarounds
+
+  cflags_objcc += [
+    "-std=c++23",
+  ]
+}

@@ -17,7 +17,11 @@ using i64 = signed long;
 using f32 = float;
 using f64 = double;
 
-using sint = i64;
+using sint [[deprecated]] = i64;
+
+using byte = u8;
+
+using usize = unsigned long;
 
 namespace internal {
 #if defined(S2_PLATFORM_WIN32)
@@ -30,5 +34,5 @@ using size_t = unsigned long;
 } // namespace s2::base
 
 namespace s2 {
-using base::sint;
+using base::usize;
 }

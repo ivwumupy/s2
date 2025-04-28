@@ -14,8 +14,8 @@ macos_application::macos_application() {
 }
 macos_application::~macos_application() { [ns_delegate_ release]; }
 void macos_application::run() { [app_ run]; }
-base::unique_ptr<window> macos_application::make_window(sint width,
-                                                        sint height) {
+base::unique_ptr<window> macos_application::make_window(usize width,
+                                                        usize height) {
   return base::make_unique<macos_window>(width, height);
 }
 base::unique_ptr<application> make_macos_application() {
