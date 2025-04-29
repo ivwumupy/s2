@@ -19,7 +19,7 @@ using f64 = double;
 
 using sint [[deprecated]] = i64;
 
-using byte = u8;
+enum class byte : unsigned char {};
 
 using usize = unsigned long;
 

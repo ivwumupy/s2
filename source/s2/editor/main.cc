@@ -10,6 +10,9 @@
 #include "s2/ui/window_delegate.h"
 
 //
+#include "s2/platform/macos/foundation/ns_string.h"
+
+//
 #include <math.h>
 #include <stdio.h>
 
@@ -121,12 +124,17 @@ private:
 } // namespace
 } // namespace s2::editor
 
-void test_comptime() { using namespace s2;
+void test_comptime() {
+  using namespace s2;
   printf("max = %lu\n", base::numeric_limits<usize>::max);
   printf("min = %lu\n", base::numeric_limits<usize>::min);
 }
 
 int main() {
+  auto s = s2::platform::macos::foundation::ns_string::string_with_utf8_string(
+      "hello, world!");
+  printf("s: %lu\n", s->length());
+
   test_comptime();
 
   constexpr auto x = s2::base::make_integers<3>();

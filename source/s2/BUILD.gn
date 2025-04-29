@@ -7,6 +7,11 @@ static_library("s2") {
     "ui/draw_batch.cc",
     "ui/view.cc",
   ] + [
+    "platform/macos/foundation/classes.cc",
+    "platform/macos/foundation/ns_autorelease_pool.cc",
+    "platform/macos/foundation/ns_string.cc",
+    "platform/macos/foundation/selectors.cc",
+    "platform/macos/objc/runtime.cc",
     "ui/macos_application.mm",
     "ui/macos_render_manager.mm",
     "ui/macos_text_manager.mm",
