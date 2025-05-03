@@ -1,0 +1,7 @@
+source_set("base") {
+  sources = [
+    "allocator.cc",
+    "backtrace.cc",
+    "panic.cc",
+  ]
+}

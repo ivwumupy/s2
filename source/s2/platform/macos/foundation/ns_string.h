@@ -7,8 +7,8 @@ namespace s2::platform::macos::foundation {
 class ns_string {
 public:
   static ns_string* string_with_utf8_string(char const* cstr);
-  ns_uinteger length() const;
+  ns_uinteger length();
 
-  operator objc::object_ref() const { return {this}; }
+  operator objc::object_ref() { return {this}; }
 };
 } // namespace s2::platform::macos::foundation

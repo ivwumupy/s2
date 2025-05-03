@@ -1,0 +1,10 @@
+executable("tunet") {
+  sources = [
+    "main.mm",
+  ]
+  frameworks = [
+    "CoreLocation.framework",
+    "CoreWLAN.framework",
+    "Foundation.framework",
+  ]
+}

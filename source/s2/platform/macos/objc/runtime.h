@@ -7,22 +7,23 @@ struct send_message_procs {
 };
 } // namespace internal
 struct selector_ref {
-  void const* inner;
+  void* inner;
 };
 struct object_ref {
-  void const* inner;
+  void* inner;
 
-  // template <typename T> T* as() { return reinterpret_cast<T*>(inner); }
+  void retain();
+  void release();
 };
 struct class_ref {
-  void const* inner;
+  void* inner;
   operator object_ref() { return {inner}; }
 };
 class_ref get_class(char const* name);
 selector_ref register_selector(char const* name);
 template <typename R, typename... Args>
 R send_message(object_ref obj, selector_ref sel, Args... args) {
-  using Proc = R (*)(void const*, void const*, Args...);
+  using Proc = R (*)(void*, void const*, Args...);
   return reinterpret_cast<Proc>(internal::send_message_procs::send_message)(
       obj.inner, sel.inner, args...);
 }

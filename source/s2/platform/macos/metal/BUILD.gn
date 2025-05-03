@@ -1,0 +1,6 @@
+source_set("metal") {
+  sources = [
+    "mtl_device.cc",
+    "selectors.cc",
+  ]
+}

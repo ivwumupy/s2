@@ -1,0 +1,7 @@
+source_set("pthread") {
+  sources = [
+    "cond.cc",
+    "mutex.cc",
+    "thread.cc",
+  ]
+}

@@ -1,0 +1,6 @@
+source_set("objc") {
+  sources = [
+    "runtime.cc",
+    "scoped_autorelease.cc",
+  ]
+}

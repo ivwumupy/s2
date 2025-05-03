@@ -94,10 +94,14 @@ public:
     return checked_convert<usize>(back_ - storage_.begin());
   }
 
+  bool is_empty() const { return back_ == storage_.begin(); }
+
   T* begin() { return storage_.begin(); }
   T const* begin() const { return storage_.begin(); }
   T* end() { return back_; }
   T const* end() const { return back_; }
+
+  auto operator[](this auto&& self, usize i) { return self.begin()[i]; }
 
   usize size_in_bytes() const { return count() * sizeof(T); }
 
