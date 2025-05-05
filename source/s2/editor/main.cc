@@ -155,72 +155,86 @@
 //   return 0;
 // }
 
-#include "s2/base/coroutine.h"
-#include "s2/base/raw_ptr.h"
+// #include "s2/base/coroutine.h"
+// #include "s2/base/raw_ptr.h"
 // #include "s2/platform/macos/dispatch/dispatch.h"
 #include "s2/exec/just.h"
+#include "s2/exec/run_loop.h"
 #include "s2/exec/start_detached.h"
 #include "s2/exec/then.h"
-#include "s2/platform/posix/pthread/thread.h"
+// #include "s2/platform/posix/pthread/thread.h"
 
 //
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
 
+namespace s2 {
 namespace {
 // the object returned to the caller when the coroutine is initially suspended
-struct return_object {
-  struct promise_type {
-    return_object get_return_object() {
-      putchar('0');
-      return {};
-    }
-    s2::base::suspend_always initial_suspend() {
-      putchar('1');
-      return {};
-    }
-    s2::base::suspend_always final_suspend() noexcept { return {}; }
-    void return_void() {}
-    void unhandled_exception() {}
-  };
-};
-struct awaitable {
-  // false => result not ready => the coroutine is suspended
-  bool await_ready() { return false; }
-  // return void => transfer control to the caller/resumer
-  void await_suspend(s2::base::coroutine_handle<>) {
-    // schedule the (suspended) coroutine to some executor to execute later
-  }
-  void await_resume() {}
-};
-return_object counter() {
-  awaitable a;
-  putchar('2');
-  co_await a;
-  putchar('3');
-  co_return;
-}
-[[maybe_unused]] void test_coroutine() {
-  counter();
-  putchar('x');
-}
+// struct return_object {
+//   struct promise_type {
+//     return_object get_return_object() {
+//       putchar('0');
+//       return {};
+//     }
+//     s2::base::suspend_always initial_suspend() {
+//       putchar('1');
+//       return {};
+//     }
+//     s2::base::suspend_always final_suspend() noexcept { return {}; }
+//     void return_void() {}
+//     void unhandled_exception() {}
+//   };
+// };
+// struct awaitable {
+//   // false => result not ready => the coroutine is suspended
+//   bool await_ready() { return false; }
+//   // return void => transfer control to the caller/resumer
+//   void await_suspend(s2::base::coroutine_handle<>) {
+//     // schedule the (suspended) coroutine to some executor to execute later
+//   }
+//   void await_resume() {}
+// };
+// return_object counter() {
+//   awaitable a;
+//   putchar('2');
+//   co_await a;
+//   putchar('3');
+//   co_return;
+// }
+// [[maybe_unused]] void test_coroutine() {
+//   counter();
+//   putchar('x');
+// }
 void test_exec() {
-  namespace exec = s2::exec;
+  auto loop = exec::run_loop{};
+  auto t0 = loop.scheduler().schedule();
+  auto t1 = exec::then(t0, [](void* p) {
+    printf("p: %p\n", p);
+    return p;
+  });
+  exec::start_detached(base::move(t1));
+  printf("started\n");
+
+  loop.dump();
+  loop.run();
+
   auto s = exec::just(3);
   auto s1 = exec::then(s, [](int x) { return x + 1; });
   auto s2 = exec::then(s1, [](int x) {
     printf("%d\n", x);
     return x;
   });
-  exec::start_detached(s2::base::move(s2));
+  exec::start_detached(base::move(s2));
 }
 } // namespace
+} // namespace s2
 
 int main() {
   // test_coroutine();
   // test_thread();
   // test_dispatch();
-  test_exec();
+  s2::test_exec();
   return 0;
 }
