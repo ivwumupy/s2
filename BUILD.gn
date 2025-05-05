@@ -1,5 +1,6 @@
 group("gn_all") {
   deps = [
+    "//source/os",
     "//source/s2",
     "//source/s2:editor",
     "//source/tunet",

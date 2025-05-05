@@ -13,8 +13,7 @@ struct start_detached_receiver {
 } // namespace internal
 // `start_detached` is a sender consumer
 template <typename S> auto start_detached(S&& s) {
-  using ops_t = connect_result_type<base::remove_reference<S>,
-                                    internal::start_detached_receiver>;
+  using ops_t = connect_result_type<S, internal::start_detached_receiver>;
   ops_t ops{base::forward<S>(s).connect(internal::start_detached_receiver{})};
   ops.start();
 }

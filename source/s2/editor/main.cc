@@ -160,6 +160,7 @@
 // #include "s2/platform/macos/dispatch/dispatch.h"
 #include "s2/exec/just.h"
 #include "s2/exec/start_detached.h"
+#include "s2/exec/then.h"
 #include "s2/platform/posix/pthread/thread.h"
 
 //
@@ -204,28 +205,15 @@ return_object counter() {
   counter();
   putchar('x');
 }
-void* foo(void*) {
-  sleep(1);
-  printf("foo()\n");
-  sleep(1);
-  printf("foo() after sleep\n");
-
-  return nullptr;
-}
-[[maybe_unused]] void test_thread() {
-  namespace pthread = s2::platform::posix::pthread;
-  pthread::thread t;
-  pthread::thread::create(t, &foo, nullptr);
-  t.join(nullptr);
-}
-// void test_dispatch() {
-//   static constexpr int x[] = {1, 2, 3};
-//   s2::platform::macos::dispatch::create_data(&x, sizeof(x));
-// }
 void test_exec() {
   namespace exec = s2::exec;
   auto s = exec::just(3);
-  exec::start_detached(s2::base::move(s));
+  auto s1 = exec::then(s, [](int x) { return x + 1; });
+  auto s2 = exec::then(s1, [](int x) {
+    printf("%d\n", x);
+    return x;
+  });
+  exec::start_detached(s2::base::move(s2));
 }
 } // namespace
 

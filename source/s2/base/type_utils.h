@@ -16,6 +16,8 @@ template <typename T> using remove_cvref = __remove_cvref(T);
 
 template <usize I, typename... Ts>
 using type_pack_element = __type_pack_element<I, Ts...>;
+
+template <typename T> using decay = __decay(T);
 #else
 namespace internal {
 template <typename T> struct remove_reference_impl {

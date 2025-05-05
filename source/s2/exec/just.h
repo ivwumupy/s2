@@ -13,13 +13,12 @@ template <typename R, typename V> struct ops {
 };
 template <typename V> struct sender {
   V value;
-  template <typename R>
-  auto connect(R&& r) && -> ops<base::remove_reference<R>, V> {
+  template <typename R> auto connect(R&& r) && -> ops<R, V> {
     return {base::forward<R>(r), base::move(value)};
   }
 };
 } // namespace internal::just
-
+// `just` is a sender factory
 template <typename V> auto just(V&& v) {
   return internal::just::sender<V>{base::forward<V>(v)};
 }

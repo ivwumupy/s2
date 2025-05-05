@@ -43,6 +43,10 @@ public:
     return visit_impl(forward<F>(func));
   }
 
+  template <usize I> auto get() {}
+
+  template <typename T> auto get() {}
+
 private:
   template <usize I, typename F>
     requires(I < type_count)

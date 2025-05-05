@@ -9,6 +9,7 @@
 #include "s2/base/panic.h"
 #include "s2/base/string_view.h"
 #include "s2/base/swap.h"
+#include "s2/base/tag_invoke.h"
 
 namespace s2::base {
 namespace internal {
@@ -60,6 +61,7 @@ private:
   T* end_;
 };
 } // namespace internal
+namespace array_ {
 template <typename T> class array {
   using storage_type = internal::array_storage<T>;
 
@@ -108,6 +110,11 @@ public:
   void swap_with(array& other) { storage_.swap_with(other.storage_); }
 
 private:
+  friend void tag_invoke(tag<swap>, array& lhs, array& rhs) {
+    swap(lhs.storage_, rhs.storage_);
+    swap(lhs.back_, rhs.back_);
+  }
+
   // Grow the array such that capacity > c.
   void grow(usize c) {
     usize nc = 2 * capacity();
@@ -130,4 +137,6 @@ private:
   storage_type storage_;
   T* back_;
 };
+} // namespace array_
+using array_::array;
 } // namespace s2::base

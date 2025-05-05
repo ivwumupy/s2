@@ -1,0 +1,9 @@
+// this is a line comment
+
+// functions
+
+def double(x: int)
+  return x + 1
+
+// mod
+mod
