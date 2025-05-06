@@ -4,11 +4,11 @@
 #include "s2/platform/macos/objc/runtime.h"
 
 namespace s2::platform::macos::foundation {
-class ns_string {
+class string {
 public:
-  static ns_string* string_with_utf8_string(char const* cstr);
-  ns_uinteger length();
+  static string* string_with_utf8_string(char const* cstr);
+  uinteger length();
 
-  operator objc::object_ref() { return {this}; }
+  auto as_object() -> objc::object_ref { return {this}; }
 };
 } // namespace s2::platform::macos::foundation

@@ -1,8 +1,8 @@
 source_set("foundation") {
   sources = [
+    "autorelease_pool.cc",
     "classes.cc",
-    "ns_autorelease_pool.cc",
-    "ns_string.cc",
     "selectors.cc",
+    "string.cc",
   ]
 }

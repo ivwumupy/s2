@@ -1,5 +1,5 @@
 #pragma once
 
 namespace s2::platform::macos::foundation {
-class ns_object {};
+class error {};
 } // namespace s2::platform::macos::foundation

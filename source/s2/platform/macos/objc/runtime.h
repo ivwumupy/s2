@@ -8,23 +8,30 @@ struct send_message_procs {
 } // namespace internal
 struct selector_ref {
   void* inner;
+
+  static selector_ref register_selector(char const* name);
 };
 struct object_ref {
   void* inner;
 
+  template <typename R, typename... Args>
+  R send_message(selector_ref sel, Args... args) {
+    using Proc = R (*)(void*, void const*, Args...);
+    return reinterpret_cast<Proc>(internal::send_message_procs::send_message)(
+        inner, sel.inner, args...);
+  }
+
+  //
   void retain();
   void release();
 };
 struct class_ref {
   void* inner;
-  operator object_ref() { return {inner}; }
+
+  static class_ref get_class(char const* name);
+
+  auto as_object() -> object_ref { return {inner}; }
 };
-class_ref get_class(char const* name);
-selector_ref register_selector(char const* name);
-template <typename R, typename... Args>
-R send_message(object_ref obj, selector_ref sel, Args... args) {
-  using Proc = R (*)(void*, void const*, Args...);
-  return reinterpret_cast<Proc>(internal::send_message_procs::send_message)(
-      obj.inner, sel.inner, args...);
-}
+// class_ref get_class(char const* name);
+// selector_ref register_selector(char const* name);
 } // namespace s2::platform::macos::objc
