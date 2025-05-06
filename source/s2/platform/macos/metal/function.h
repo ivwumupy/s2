@@ -6,16 +6,13 @@ namespace s2::platform::macos {
 namespace foundation {
 class string;
 }
-namespace metal {
-class function;
-}
 } // namespace s2::platform::macos
 
 namespace s2::platform::macos::metal {
-class library {
+class function {
 public:
-  auto new_function(foundation::string* name) -> function*;
+  auto name() -> foundation::string*;
 
-  auto as_object() -> objc::object_ref { return {this}; }
+  objc::object_ref as_object() { return {this}; }
 };
 } // namespace s2::platform::macos::metal

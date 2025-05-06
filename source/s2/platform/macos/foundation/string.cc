@@ -13,4 +13,7 @@ string* string::string_with_utf8_string(const char* cstr) {
 uinteger string::length() {
   return as_object().send_message<uinteger>(selectors::length);
 }
+auto string::utf8_string() -> char const* {
+  return as_object().send_message<char const*>(selectors::UTF8String);
+}
 } // namespace s2::platform::macos::foundation

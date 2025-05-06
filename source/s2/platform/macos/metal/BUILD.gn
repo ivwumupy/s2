@@ -1,6 +1,10 @@
 source_set("metal") {
   sources = [
+    "classes.cc",
     "device.cc",
+    "function.cc",
+    "library.cc",
+    "render_pipeline_descriptor.cc",
     "selectors.cc",
   ]
 }

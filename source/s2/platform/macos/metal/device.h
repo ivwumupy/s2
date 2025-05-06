@@ -19,7 +19,6 @@ namespace s2::platform::macos::metal {
 class device {
 public:
   static device* create_system_default();
-  ~device();
 
   library* new_library(dispatch::data_ref data, foundation::error** error);
   render_pipeline_state* new_render_pipeline_state();

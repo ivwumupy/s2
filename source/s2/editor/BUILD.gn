@@ -1,0 +1,13 @@
+executable("editor") {
+  sources = [
+    "main.cc",
+  ]
+  deps = [
+    "//source/s2",
+  ]
+  frameworks = [
+    "AppKit.framework",
+    "QuartzCore.framework",
+    "Metal.framework",
+  ]
+}

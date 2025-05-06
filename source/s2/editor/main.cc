@@ -157,17 +157,19 @@
 
 // #include "s2/base/coroutine.h"
 // #include "s2/base/raw_ptr.h"
-// #include "s2/platform/macos/dispatch/dispatch.h"
-#include "s2/exec/just.h"
-#include "s2/exec/run_loop.h"
-#include "s2/exec/start_detached.h"
-#include "s2/exec/then.h"
-// #include "s2/platform/posix/pthread/thread.h"
+#include "s2/platform/macos/dispatch/dispatch.h"
+#include "s2/platform/macos/foundation/string.h"
+#include "s2/platform/macos/metal/device.h"
+#include "s2/platform/macos/metal/function.h"
+#include "s2/platform/macos/metal/library.h"
 
 //
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
+
+//
+#include "s2/ui/macos_shaders.h"
 
 namespace s2 {
 namespace {
@@ -207,34 +209,22 @@ namespace {
 //   counter();
 //   putchar('x');
 // }
-void test_exec() {
-  auto loop = exec::run_loop{};
-  auto t0 = loop.scheduler().schedule();
-  auto t1 = exec::then(t0, [](void* p) {
-    printf("p: %p\n", p);
-    return p;
-  });
-  exec::start_detached(base::move(t1));
-  printf("started\n");
-
-  loop.dump();
-  loop.run();
-
-  auto s = exec::just(3);
-  auto s1 = exec::then(s, [](int x) { return x + 1; });
-  auto s2 = exec::then(s1, [](int x) {
-    printf("%d\n", x);
-    return x;
-  });
-  exec::start_detached(base::move(s2));
+void test_metal() {
+  using namespace platform::macos;
+  // auto s = foundation::string::string_with_utf8_string("hello, world");
+  // printf("s: %s\n", s->utf8_string());
+  auto device = metal::device::create_system_default();
+  auto data = dispatch::data_ref::create_data(s2_ui_macos_shaders,
+                                              s2_ui_macos_shaders_len);
+  auto library = device->new_library(data, nullptr);
+  auto func = library->new_function(
+      foundation::string::string_with_utf8_string("triangle_vertex"));
+  printf("name: %s\n", func->name()->utf8_string());
 }
 } // namespace
 } // namespace s2
 
 int main() {
-  // test_coroutine();
-  // test_thread();
-  // test_dispatch();
-  s2::test_exec();
+  s2::test_metal();
   return 0;
 }

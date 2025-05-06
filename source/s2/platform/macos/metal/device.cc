@@ -8,7 +8,6 @@ void* MTLCreateSystemDefaultDevice();
 }
 
 namespace s2::platform::macos::metal {
-device::~device() {}
 device* device::create_system_default() {
   return reinterpret_cast<device*>(MTLCreateSystemDefaultDevice());
 }

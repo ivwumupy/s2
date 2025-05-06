@@ -7,7 +7,9 @@ namespace s2::platform::macos::foundation {
 class string {
 public:
   static string* string_with_utf8_string(char const* cstr);
+
   uinteger length();
+  auto utf8_string() -> char const*;
 
   auto as_object() -> objc::object_ref { return {this}; }
 };
