@@ -2,7 +2,9 @@
 #define S2_OBJC_SELECTOR(...)
 #endif
 
-///Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/objc/runtime.h
+// object
+
+S2_OBJC_SELECTOR(release, "release")
 
 // autorelease pool
 

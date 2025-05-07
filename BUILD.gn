@@ -3,6 +3,7 @@ group("gn_all") {
     "//source/os",
     "//source/s2",
     "//source/s2/editor",
+    "//source/s2/lang",
     "//source/tunet",
   ]
 }

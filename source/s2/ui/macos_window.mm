@@ -47,6 +47,8 @@ void macos_window::init_layer() {
   metal_layer_.pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
   // TODO
   metal_layer_.drawableSize = CGSizeMake(1000, 1000);
+  // [NOTE]
+  // It seems that the default color space is some sort of sRGB.
 }
 void macos_window::init_view() {
   ns_view_ = [[s2_metal_view alloc] initWithBridge:this];

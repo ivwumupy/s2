@@ -5,5 +5,8 @@
 def double(x: int)
   return x + 1
 
-// mod
-mod
+def foo()
+  let x =
+    return 1
+
+foo()

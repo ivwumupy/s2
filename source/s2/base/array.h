@@ -7,6 +7,7 @@
 #include "s2/base/initializer_list.h"
 #include "s2/base/move.h"
 #include "s2/base/panic.h"
+#include "s2/base/slice.h"
 #include "s2/base/string_view.h"
 #include "s2/base/swap.h"
 #include "s2/base/tag_invoke.h"
@@ -103,9 +104,12 @@ public:
   T* end() { return back_; }
   T const* end() const { return back_; }
 
-  auto operator[](this auto&& self, usize i) { return self.begin()[i]; }
+  auto operator[](usize i) -> T& { return begin()[i]; }
+  auto operator[](usize i) const -> T const& { return begin()[i]; }
 
   usize size_in_bytes() const { return count() * sizeof(T); }
+
+  slice<T> as_slice() { return slice<T>{begin(), end()}; }
 
   void swap_with(array& other) { storage_.swap_with(other.storage_); }
 

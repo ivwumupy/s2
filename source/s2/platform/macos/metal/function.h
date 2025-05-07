@@ -1,6 +1,6 @@
 #pragma once
 
-#include "s2/platform/macos/objc/runtime.h"
+#include "s2/platform/macos/foundation/object.h"
 
 namespace s2::platform::macos {
 namespace foundation {
@@ -9,10 +9,8 @@ class string;
 } // namespace s2::platform::macos
 
 namespace s2::platform::macos::metal {
-class function {
+class function : public foundation::object {
 public:
   auto name() -> foundation::string*;
-
-  objc::object_ref as_object() { return {this}; }
 };
 } // namespace s2::platform::macos::metal

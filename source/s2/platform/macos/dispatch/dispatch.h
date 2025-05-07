@@ -7,6 +7,8 @@ struct data_ref {
   void* inner;
 
   static auto create_data(void const* buffer, usize size) -> data_ref;
+
+  auto release() -> void;
 };
 struct queue_ref {
   void* inner;

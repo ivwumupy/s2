@@ -6,5 +6,6 @@ source_set("metal") {
     "library.cc",
     "render_pipeline_descriptor.cc",
     "selectors.cc",
+    "vertex_descriptor.cc",
   ]
 }

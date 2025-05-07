@@ -6,6 +6,6 @@ static_library("s2") {
     "//source/s2/platform/macos/metal",
     "//source/s2/platform/macos/objc",
     "//source/s2/platform/posix/pthread",
-    #"//source/s2/ui",
+    "//source/s2/ui",
   ]
 }
