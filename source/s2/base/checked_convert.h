@@ -11,8 +11,8 @@ template <typename T> using make_unsigned = __make_unsigned(T);
 template <typename T, typename U> constexpr bool safe_less_equal(T t, U u) {
   if constexpr (is_signed<T> == is_signed<U>)
     return t <= u;
-  else if (is_signed<T>)
-    return t < 0 ? true : make_unsigned<T>(t) < u;
+  else if constexpr (is_signed<T>)
+    return t < 0 ? true : make_unsigned<T>(t) <= u;
   else
     return u < 0 ? false : t <= make_unsigned<U>(u);
 }

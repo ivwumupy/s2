@@ -8,7 +8,6 @@
 #include "s2/base/move.h"
 #include "s2/base/panic.h"
 #include "s2/base/slice.h"
-#include "s2/base/string_view.h"
 #include "s2/base/swap.h"
 #include "s2/base/tag_invoke.h"
 
@@ -69,8 +68,7 @@ template <typename T> class array {
 public:
   array() : back_{nullptr} {}
   array([[maybe_unused]] initializer_list<T> l) {
-    using namespace literals;
-    panic("todo"_sv);
+    s2_panic("todo");
   }
 
   array(array const&) {}

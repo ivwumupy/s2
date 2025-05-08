@@ -1,0 +1,12 @@
+template("test") {
+  executable(target_name) {
+    forward_variables_from(invoker, [
+      "sources", "deps",
+    ])
+    if (defined(deps)) {
+      deps += [ "//source/s2/test" ]
+    } else {
+      deps = [ "//source/s2/test" ]
+    }
+  }
+}

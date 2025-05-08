@@ -2,6 +2,7 @@
 
 #include "s2/base/array.h"
 #include "s2/base/basic_types.h"
+#include "s2/base/string_view.h"
 #include "s2/ui/geometry.h"
 
 namespace s2::ui {

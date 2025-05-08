@@ -1,0 +1,18 @@
+import("//build/test.gni")
+
+source_set("test") {
+  sources = [
+    "test.cc",
+    "test_main.cc",
+    "test_manager.cc",
+  ]
+  deps = [
+    "//source/s2/base",
+  ]
+}
+
+test("dummy_test") {
+  sources = [
+    "dummy_test.cc",
+  ]
+}

@@ -5,7 +5,6 @@
 #define s2_check(cond)                                                         \
   do {                                                                         \
     if (!(cond)) {                                                             \
-      using namespace s2::base::literals;                                      \
-      s2::base::panic("check `" #cond "` fails"##_sv);                         \
+      s2_panic("check `" #cond "` fails");                                     \
     }                                                                          \
   } while (0);

@@ -1,7 +1,18 @@
+import("//build/test.gni")
+
 source_set("base") {
   sources = [
     "allocator.cc",
     "backtrace.cc",
     "panic.cc",
+  ]
+}
+
+test("base_tests") {
+  sources = [
+    "string_view_tests.cc",
+  ]
+  deps = [
+    ":base",
   ]
 }

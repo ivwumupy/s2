@@ -11,19 +11,19 @@
 #include <stdlib.h>
 #endif
 
-namespace s2::base {
-void panic(string_view message, source_location loc) {
+namespace s2::base::internal {
+void panic(char const* msg, char const* file, unsigned int line) {
   fprintf(stderr,
           "====[ PANIC ]====\n"
           "message: %s\n"
-          "location: %s:%ld\n"
+          "location: %s:%d\n"
           "backtrace:\n",
-          message.data(), loc.file().data(), loc.line());
+          msg, file, line);
   print_backtrace();
 #if defined(S2_PLATFORM_CLANG)
   __builtin_trap();
 #elif defined(S2_PLATFORM_MSVC)
-    exit(1);
+  __debugbreak();
 #endif
 }
-} // namespace s2::base
+} // namespace s2::base::internal

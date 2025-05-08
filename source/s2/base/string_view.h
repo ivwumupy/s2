@@ -1,8 +1,12 @@
 #pragma once
 
 #include "s2/base/basic_types.h"
+#include "s2/base/checked_convert.h"
 
 namespace s2::base {
+namespace internal {
+inline constexpr usize strlen(char const* s) { return __builtin_strlen(s); }
+} // namespace internal
 class string_view {
 public:
   // [NOTE]
@@ -13,6 +17,12 @@ public:
 
   constexpr string_view(char const* begin, usize length)
       : beg_{begin}, end_{begin + length} {}
+
+  constexpr string_view(char const* s) : string_view(s, internal::strlen(s)) {}
+
+  constexpr auto length() const -> usize {
+    return checked_convert<usize>(end_ - beg_);
+  }
 
   constexpr char const* data() const { return beg_; }
 

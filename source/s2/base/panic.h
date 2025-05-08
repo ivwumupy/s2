@@ -1,9 +1,7 @@
 #pragma once
 
-#include "s2/base/source_location.h"
-#include "s2/base/string_view.h"
+#define s2_panic(msg) ::s2::base::internal::panic(msg, __FILE__, __LINE__)
 
-namespace s2::base {
-[[noreturn]] void panic(string_view message,
-                        source_location loc = source_location::current());
+namespace s2::base::internal {
+[[noreturn]] void panic(char const* msg, char const* file, unsigned int line);
 }
