@@ -67,14 +67,18 @@ template <typename T> class array {
 
 public:
   array() : back_{nullptr} {}
-  array([[maybe_unused]] initializer_list<T> l) {
-    s2_panic("todo");
+  array([[maybe_unused]] initializer_list<T> l) { s2_panic("todo"); }
+
+  array(array const& other) { init_by_copy(other.begin(), other.end()); }
+  array& operator=(array const& other) {
+    array tmp(other);
+    swap_with(tmp);
+    return *this;
   }
 
-  array(array const&) {}
-  array& operator=(array const&) { return *this; }
-
-  array(array&&) {}
+  array(array&& other) : storage_{move(other.storage_)}, back_{other.back_} {
+    other.back_ = nullptr;
+  }
   array& operator=(array&& other) {
     array tmp = move(other);
     swap_with(tmp);
@@ -105,6 +109,21 @@ public:
   auto operator[](usize i) -> T& { return begin()[i]; }
   auto operator[](usize i) const -> T const& { return begin()[i]; }
 
+  auto ensure_capacity(usize c) -> void {
+    if (capacity() >= c)
+      return;
+    grow(c);
+  }
+
+  // unsafe
+  auto set_count(usize c) -> void { back_ = begin() + c; }
+
+  // unsafe
+  auto resize_uninitialized(usize n) -> void {
+    ensure_capacity(n);
+    set_count(n);
+  }
+
   usize size_in_bytes() const { return count() * sizeof(T); }
 
   slice<T> as_slice() { return slice<T>{begin(), end()}; }
@@ -112,9 +131,12 @@ public:
   void swap_with(array& other) { storage_.swap_with(other.storage_); }
 
 private:
-  friend void tag_invoke(tag<swap>, array& lhs, array& rhs) {
-    swap(lhs.storage_, rhs.storage_);
-    swap(lhs.back_, rhs.back_);
+  void init_by_copy(T const* begin, T const* end) {
+    storage_ = storage_type(end - begin);
+    for (T *b = begin, *it = storage_.begin(); b < end; b++, it++) {
+      construct_at<T>(it, *b);
+    }
+    back_ = storage_.end();
   }
 
   // Grow the array such that capacity > c.
@@ -136,9 +158,22 @@ private:
     swap(back_, nb);
   }
 
+  friend void tag_invoke(tag<swap>, array& lhs, array& rhs) {
+    swap(lhs.storage_, rhs.storage_);
+    swap(lhs.back_, rhs.back_);
+  }
+
   storage_type storage_;
   T* back_;
 };
 } // namespace array_
 using array_::array;
+template <typename T, typename... Ts> auto make_array(Ts&&... ts) -> array<T> {
+  constexpr usize n = sizeof...(Ts);
+  array<T> x;
+  x.resize_uninitialized(n);
+  usize i = 0;
+  (construct_at<T>(x.begin() + (i++), forward<Ts>(ts)), ...);
+  return x;
+}
 } // namespace s2::base

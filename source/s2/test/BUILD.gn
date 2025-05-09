@@ -11,8 +11,8 @@ source_set("test") {
   ]
 }
 
-test("dummy_test") {
+test("dummy_tests") {
   sources = [
-    "dummy_test.cc",
+    "dummy_tests.cc",
   ]
 }
