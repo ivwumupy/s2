@@ -1,6 +1,29 @@
-executable("lang") {
+import("//build/test.gni")
+
+source_set("lang") {
+  sources = [
+    "green_node.cc",
+    "lexer.cc",
+  ]
+  deps = [
+    "//source/s2/base",
+  ]
+}
+
+executable("driver") {
   sources = [
     "driver.cc",
-    "lexer.cc",
+  ]
+  deps = [
+    ":lang",
+  ]
+}
+
+test("lang_tests") {
+  sources = [
+    "lexer_tests.cc",
+  ]
+  deps = [
+    ":lang",
   ]
 }

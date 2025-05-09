@@ -9,6 +9,9 @@ public:
 
   s2::base::usize count() const { return size_; }
 
+  auto begin() -> T const* { return begin_; }
+  auto end() -> T const* { return begin_ + size_; }
+
 private:
   constexpr initializer_list(T const* b, s2::base::usize s)
       : begin_{b}, size_{s} {}

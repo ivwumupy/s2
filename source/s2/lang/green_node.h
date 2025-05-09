@@ -1,16 +1,15 @@
 #pragma once
 
+#include "s2/base/array.h"
 #include "s2/base/basic_types.h"
-#include "s2/base/string_view.h"
-#include "s2/lang/green_kind.h"
+#include "s2/base/variant.h"
+#include "s2/lang/syntax_kind.h"
+#include "s2/lang/token.h"
 
 namespace s2::lang {
-struct green_token {
-  green_kind kind;
-  base::string_view text;
-};
 struct green_node {
-  green_kind kind;
+  syntax_kind kind;
   usize length;
+  base::array<base::variant<token, green_node>> children;
 };
 } // namespace s2::lang
