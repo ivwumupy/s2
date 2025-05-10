@@ -94,6 +94,13 @@ public:
     back_++;
   }
 
+  auto pop() -> void {
+    s2_check(count() > 0);
+    auto p = back_ - 1;
+    destruct_at(p);
+    back_--;
+  }
+
   usize capacity() const { return storage_.capacity(); }
   usize count() const {
     return checked_convert<usize>(back_ - storage_.begin());

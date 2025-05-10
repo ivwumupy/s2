@@ -2,11 +2,14 @@
 
 #include "s2/base/basic_types.h"
 #include "s2/base/check.h"
+#include "s2/base/checked_convert.h"
 
 namespace s2::base {
 template <typename T> class slice {
 public:
   slice(T* begin, T* end) : begin_{begin}, end_{end} {}
+
+  auto count() const -> usize { return checked_convert<usize>(end_ - begin_); }
 
   auto begin() -> T* { return begin_; }
   auto begin() const -> T const* { return begin_; }
@@ -20,6 +23,10 @@ public:
   auto operator[](usize i) const -> T const& {
     s2_check(begin_ + i < end_);
     return begin_[i];
+  }
+
+  auto as_bytes() -> slice<byte> {
+    return {reinterpret_cast<byte*>(begin_), reinterpret_cast<byte*>(end_)};
   }
 
 private:

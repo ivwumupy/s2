@@ -2,22 +2,10 @@
 
 namespace s2::lang {
 enum class syntax_kind {
-  whitespace,
-  line_comment,
-
-  l_paren,
-  r_paren,
-  l_brace,
-  r_brace,
-
-  semicolon,
-  equal,
-
-  ident,
-
-  kw_def,
-
-  unknown_character,
-  end_of_input,
+#define s2_syntax_leaf(x) x,
+#define s2_syntax_node(x) x,
+#include "s2/lang/syntax_kind.inc"
 };
-}
+auto syntax_name(syntax_kind kind) -> char const*;
+auto is_leaf_syntax(syntax_kind kind) -> bool;
+} // namespace s2::lang

@@ -4,6 +4,8 @@ source_set("lang") {
   sources = [
     "green_node.cc",
     "lexer.cc",
+    "parser.cc",
+    "syntax_kind.cc",
   ]
   deps = [
     "//source/s2/base",
@@ -22,6 +24,7 @@ executable("driver") {
 test("lang_tests") {
   sources = [
     "lexer_tests.cc",
+    "parser_tests.cc",
   ]
   deps = [
     ":lang",

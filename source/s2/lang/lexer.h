@@ -12,7 +12,6 @@ public:
 
   auto advance(usize n = 1) -> void { cur_ += n; }
   auto is_end() -> bool { return cur_ >= end_; }
-  // Note: -1 cannot appear in valid UTF-8 sequences.
   auto peek() -> char {
     if (is_end())
       return end_of_input;
@@ -56,6 +55,7 @@ public:
   }
 
 private:
+  // Note: -1 cannot appear in valid UTF-8 sequences.
   static constexpr char end_of_input = -1;
 
   char const* cur_;

@@ -1,0 +1,24 @@
+source_file =
+  module_item*
+
+module_item =
+  function_def
+  struct_def
+
+name =
+  ident
+
+type =
+  ident
+
+function_def =
+  "def" name param_list return_type block_expr
+
+param_list =
+  "(" (param ("," param)*)? ")"
+
+return_type =
+  ":" type
+
+block_expr =
+  "{" stmt* "}"
