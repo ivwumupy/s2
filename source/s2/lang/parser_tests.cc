@@ -19,7 +19,7 @@ auto lex_all(base::string_view source) -> base::array<token> {
 }
 test::test basics{[] {
   green_zone zone;
-  auto tokens = lex_all("(( ) ())");
+  auto tokens = lex_all("  def main() {}");
   parser p{&zone, tokens.as_slice()};
   auto s = p.parse_source_file();
   s->dump();

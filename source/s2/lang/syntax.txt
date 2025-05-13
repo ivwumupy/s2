@@ -1,9 +1,13 @@
-source_file =
-  module_item*
+// Note:
+// - Nodes like `expr` and `stmt` that serves the role of base classes will not
+//   have corresponding syntax kinds.
 
-module_item =
-  function_def
-  struct_def
+source_file =
+  item*
+
+item =
+  function_item
+  struct_item
 
 name =
   ident
@@ -16,6 +20,9 @@ function_def =
 
 param_list =
   "(" (param ("," param)*)? ")"
+
+param =
+  name ":" type
 
 return_type =
   ":" type
