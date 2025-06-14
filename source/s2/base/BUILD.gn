@@ -10,6 +10,7 @@ source_set("base") {
 
 test("base_tests") {
   sources = [
+    "allocator_tests.cc",
     "array_tests.cc",
     "string_view_tests.cc",
   ]

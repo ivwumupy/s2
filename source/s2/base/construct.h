@@ -2,8 +2,10 @@
 
 #include "s2/base/move.h"
 
+#include "s2/base/allocator.h"
+
 //
-#include <new> // IWYU pragma: keep
+// #include <new> // IWYU pragma: keep
 
 namespace s2::base {
 template <typename T, typename... Args>

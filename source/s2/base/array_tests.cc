@@ -1,17 +1,17 @@
 #include "s2/base/array.h"
 #include "s2/base/checked_convert.h"
 #include "s2/test/expects.h"
-#include "s2/test/test.h"
+#include "s2/test/test_case.h"
 
 using namespace s2::base;
-using namespace s2::test;
+using s2::test::test_case;
 
 namespace {
-test basics{[] {
+test_case basics{[] {
   array<int> x;
   s2_expect_eq(x.count(), 0);
 }};
-test grow{[] {
+test_case grow{[] {
   array<int> x;
   for (int i = 0; i < 100; i++)
     x.construct_back(i);
@@ -19,13 +19,13 @@ test grow{[] {
   for (int i = 0; i < 100; i++)
     s2_expect_eq(x[checked_convert<usize>(i)], i);
 }};
-test make{[] {
+test_case make{[] {
   auto x = make_array<int>(1, 2, 3, 4, 5);
   s2_expect_eq(x.count(), 5);
   for (int i = 0; i < 5; i++)
     s2_expect_eq(x[checked_convert<usize>(i)], i + 1);
 }};
-test pop{[] {
+test_case pop{[] {
   auto x = make_array<int>(1, 2, 3, 4, 5);
   s2_expect_eq(x.count(), 5);
   x.pop();

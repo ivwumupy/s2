@@ -1,11 +1,12 @@
 #include "s2/lang/green_zone.h"
 #include "s2/lang/lexer.h"
 #include "s2/lang/parser.h"
-#include "s2/test/test.h"
+#include "s2/test/test_case.h"
 
 namespace s2 {
 namespace {
 using namespace lang;
+using test::test_case;
 auto lex_all(base::string_view source) -> base::array<token> {
   lexer l{source.begin(), source.end()};
   base::array<token> result;
@@ -17,7 +18,7 @@ auto lex_all(base::string_view source) -> base::array<token> {
   }
   return result;
 }
-test::test basics{[] {
+test_case basics{[] {
   green_zone zone;
   auto tokens = lex_all("  def main() {}");
   parser p{&zone, tokens.as_slice()};

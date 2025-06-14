@@ -1,7 +1,7 @@
 #include "s2/test/test_manager.h"
 
 //
-#include "s2/test/test.h"
+#include "s2/test/test_case.h"
 
 //
 #include <stdio.h>

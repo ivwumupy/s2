@@ -1,6 +1,6 @@
 #include "s2/base/string_view.h"
 #include "s2/test/expects.h"
-#include "s2/test/test.h"
+#include "s2/test/test_case.h"
 
 using namespace s2::base;
 

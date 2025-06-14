@@ -8,12 +8,12 @@ public:
   test_base();
   virtual auto run() -> void = 0;
 };
-template <typename F> struct test final : test_base {
+template <typename F> struct test_case final : test_base {
   F f;
-  template <typename S> test(S&& s) : f{base::forward<S>(s)} {}
+  template <typename S> test_case(S&& s) : f{base::forward<S>(s)} {}
   auto run() -> void override { f(); }
 };
-template <typename F> test(F&&) -> test<F>;
+template <typename F> test_case(F&&) -> test_case<F>;
 } // namespace s2::test
 
 #define TEST_CLASS_NAME_(name) name##_s2_test_
