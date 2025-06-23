@@ -1,6 +1,6 @@
 #pragma once
 
-#include "s2/base/array.h"
+#include "s2/base/vector.h"
 #include "s2/lang/green_zone.h"
 #include "s2/lang/token.h"
 
@@ -42,8 +42,8 @@ private:
     usize offset;
   };
   green_zone* zone_;
-  base::array<partial_node> parents_;
-  base::array<green_node*> children_;
+  base::vector<partial_node> parents_;
+  base::vector<green_node*> children_;
 };
 
 } // namespace s2::lang

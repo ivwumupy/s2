@@ -1,7 +1,7 @@
 #pragma once
 
 #include "s2/base/allocator.h"
-#include "s2/base/array.h"
+#include "s2/base/vector.h"
 #include "s2/base/construct.h"
 #include "s2/base/move.h"
 #include "s2/base/type_utils.h"
@@ -32,14 +32,14 @@ public:
   template <typename T, typename... Args>
     requires(base::is_derived_from<T, view>)
   T::builder_type make_view(Args&&... args) {
-    void* ptr = base::default_allocator()->alloc(sizeof(T));
-    T* v = base::construct_at<T>(ptr, base::forward<Args>(args)...);
+    T* p = base::v2::default_allocator<T>{}.alloc();
+    T* v = base::construct_at<T>(p, base::forward<Args>(args)...);
     return typename T::builder_type{v};
   }
 
 private:
   rect bounds_;
   view* parent_ = nullptr;
-  base::array<view*> children_;
+  base::vector<view*> children_;
 };
 } // namespace s2::ui

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "s2/base/array.h"
+#include "s2/base/vector.h"
 
 namespace s2::test {
 class test_base;
@@ -15,6 +15,6 @@ public:
   void run_all();
 
 private:
-  base::array<test_base*> tests_;
+  base::vector<test_base*> tests_;
 };
 } // namespace s2::test

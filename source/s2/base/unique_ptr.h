@@ -29,7 +29,7 @@ public:
   ~unique_ptr() {
     if (ptr_) {
       destruct_at(ptr_);
-      default_allocator()->dealloc(ptr_);
+      default_allocator<T>{}.free(ptr_);
     }
   }
 
@@ -53,7 +53,7 @@ private:
 };
 template <typename T, typename... Args>
 unique_ptr<T> make_unique(Args&&... args) {
-  void* ptr = default_allocator()->alloc(sizeof(T));
+  void* ptr = default_allocator<T>{}.alloc();
   return unique_ptr<T>{construct_at<T>(ptr, base::forward<Args>(args)...)};
 }
 } // namespace s2::base

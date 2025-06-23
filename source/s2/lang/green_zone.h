@@ -11,15 +11,15 @@ namespace s2::lang {
 class green_zone {
 public:
   green_zone() {
-    current_page_ =
-      static_cast<base::byte*>(base::default_allocator()->alloc(page_size));
+    current_page_ = static_cast<base::byte*>(
+      base::default_allocator<base::byte>{}.alloc_n(page_size));
     pos_ = current_page_;
     end_ = current_page_ + page_size;
   }
 
   ~green_zone() {
     if (current_page_)
-      base::default_allocator()->dealloc(current_page_);
+      base::default_allocator<base::byte>{}.free_n(current_page_, page_size);
   }
 
   auto make_leaf(syntax_kind kind, base::string_view text) -> green_node* {

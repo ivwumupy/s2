@@ -1,6 +1,6 @@
 #pragma once
 
-#include "s2/base/array.h"
+#include "s2/base/vector.h"
 #include "s2/base/string_view.h"
 #include "s2/lang/token.h"
 
@@ -62,6 +62,6 @@ private:
   char const* end_;
   // start of the current token
   char const* current_start_;
-  base::array<token> toks_;
+  base::vector<token> toks_;
 };
 } // namespace s2::lang

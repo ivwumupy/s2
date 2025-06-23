@@ -85,7 +85,7 @@ private:
   state state_ = state::running;
   platform::posix::pthread::mutex mutex_;
   platform::posix::pthread::cond cond_;
-  base::array<internal::run_loop_task*> tasks_;
+  base::vector<internal::run_loop_task*> tasks_;
   // next task index (temp hack)
   usize index_ = 0;
 };

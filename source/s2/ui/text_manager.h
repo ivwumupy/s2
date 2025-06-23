@@ -1,6 +1,6 @@
 #pragma once
 
-#include "s2/base/array.h"
+#include "s2/base/vector.h"
 #include "s2/base/basic_types.h"
 #include "s2/base/string_view.h"
 #include "s2/ui/geometry.h"
@@ -17,13 +17,13 @@ struct glyph_id {
 };
 class shaped_segment {
 private:
-  base::array<glyph_id> glyphs_;
-  base::array<point> positions_;
+  base::vector<glyph_id> glyphs_;
+  base::vector<point> positions_;
 };
 class shaped_line {
 public:
 private:
-  base::array<shaped_segment> segments_;
+  base::vector<shaped_segment> segments_;
 };
 class text_manager {
 public:

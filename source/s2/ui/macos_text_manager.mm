@@ -14,6 +14,7 @@ macos_font::~macos_font() { CFRelease(font_); }
 macos_text_manager::macos_text_manager() { create_default_font(); }
 macos_text_manager::~macos_text_manager() {}
 void macos_text_manager::create_default_font() {
+  // 0.0 means default size
   auto f = CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, 0.0, nullptr);
   default_font_ = base::make_unique<macos_font>(f);
 }

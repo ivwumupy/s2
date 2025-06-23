@@ -1,6 +1,6 @@
 #pragma once
 
-#include "s2/base/array.h"
+#include "s2/base/vector.h"
 
 namespace s2::ui {
 class draw_batch {
@@ -22,6 +22,6 @@ public:
     add_vertex(x2, y2, r, g, b);
   }
 
-  base::array<vertex> vertices;
+  base::vector<vertex> vertices;
 };
 } // namespace s2::ui

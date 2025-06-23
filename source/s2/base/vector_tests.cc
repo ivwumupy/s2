@@ -1,4 +1,4 @@
-#include "s2/base/array.h"
+#include "s2/base/vector.h"
 #include "s2/base/checked_convert.h"
 #include "s2/test/expects.h"
 #include "s2/test/test_case.h"
@@ -8,11 +8,11 @@ using s2::test::test_case;
 
 namespace {
 test_case basics{[] {
-  array<int> x;
+  vector<int> x;
   s2_expect_eq(x.count(), 0);
 }};
 test_case grow{[] {
-  array<int> x;
+  vector<int> x;
   for (int i = 0; i < 100; i++)
     x.construct_back(i);
   s2_expect_eq(x.count(), 100);

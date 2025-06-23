@@ -1,7 +1,6 @@
 #pragma once
 
 #include "s2/base/move.h"
-#include "s2/base/type_utils.h"
 
 namespace s2::exec {
 namespace internal::just {

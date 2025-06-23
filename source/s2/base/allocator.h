@@ -2,11 +2,14 @@
 
 #include "s2/base/basic_types.h"
 
-inline constexpr auto operator new(s2::usize, void* p) noexcept -> void* {
-  return p;
-}
-
 namespace std {
+// Allocating uninitialized memory in comptime is only allowed in
+// `std::allocator`.
+//
+// `__builtin_operator_new` and `__builtin_operator_delete` are equivalent to
+// the "replaceable global allocation function", `::operator new` and
+// `::operator delete`. But they allow optimizations like merging allocations.
+//
 template <typename T> struct allocator {
   constexpr auto allocate(s2::usize n) const -> T* {
     return static_cast<T*>(__builtin_operator_new(n * sizeof(T)));
@@ -18,6 +21,7 @@ template <typename T> struct allocator {
 } // namespace std
 
 namespace s2::base {
+namespace v1 {
 class allocator {
 public:
   constexpr virtual ~allocator() = default;
@@ -39,9 +43,10 @@ inline constexpr allocator* default_allocator() {
     return internal::runtime_default_allocator();
   }
 }
+} // namespace v1
 // [NOTES]
 // 1. every type carries size and alignment info
-namespace v2 {
+inline namespace v2 {
 template <typename T>
 concept allocator = true;
 template <typename T> struct default_allocator {

@@ -11,8 +11,9 @@ source_set("base") {
 test("base_tests") {
   sources = [
     "allocator_tests.cc",
-    "array_tests.cc",
+    "hash_map_tests.cc",
     "string_view_tests.cc",
+    "vector_tests.cc",
   ]
   deps = [
     ":base",

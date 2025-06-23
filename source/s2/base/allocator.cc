@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 namespace s2::base {
+namespace v1 {
 class libc_allocator final : public allocator {
 public:
   void* alloc(usize size) override { return ::malloc(size); }
@@ -15,4 +16,5 @@ allocator* runtime_default_allocator() {
   return &instance;
 }
 } // namespace internal
+} // namespace v1
 } // namespace s2::base

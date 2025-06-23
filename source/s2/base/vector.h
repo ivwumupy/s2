@@ -19,7 +19,7 @@ public:
   constexpr array_storage() : begin_{nullptr}, end_{nullptr} {}
 
   array_storage(usize capacity) {
-    void* ptr = default_allocator()->alloc(sizeof(T) * capacity);
+    void* ptr = default_allocator<T>{}.alloc_n(capacity);
     begin_ = reinterpret_cast<T*>(ptr);
     end_ = begin_ + capacity;
   }
@@ -55,37 +55,37 @@ public:
   }
 
 private:
-  void release() { default_allocator()->dealloc(begin_); }
+  void release() { default_allocator<T>{}.free_n(begin_, capacity()); }
 
   T* begin_;
   T* end_;
 };
 } // namespace internal
 namespace array_ {
-template <typename T> class array {
+template <typename T> class vector {
   using storage_type = internal::array_storage<T>;
 
 public:
-  array() : back_{nullptr} {}
-  array([[maybe_unused]] initializer_list<T> l) { s2_panic("todo"); }
+  vector() : back_{nullptr} {}
+  vector([[maybe_unused]] initializer_list<T> l) { s2_panic("todo"); }
 
-  array(array const& other) { init_by_copy(other.begin(), other.end()); }
-  array& operator=(array const& other) {
-    array tmp(other);
+  vector(vector const& other) { init_by_copy(other.begin(), other.end()); }
+  vector& operator=(vector const& other) {
+    vector tmp(other);
     swap_with(tmp);
     return *this;
   }
 
-  array(array&& other) : storage_{move(other.storage_)}, back_{other.back_} {
+  vector(vector&& other) : storage_{move(other.storage_)}, back_{other.back_} {
     other.back_ = nullptr;
   }
-  array& operator=(array&& other) {
-    array tmp = move(other);
+  vector& operator=(vector&& other) {
+    vector tmp = move(other);
     swap_with(tmp);
     return *this;
   }
 
-  ~array() {}
+  ~vector() {}
 
   template <typename... Args> void construct_back(Args&&... args) {
     if (back_ == storage_.end())
@@ -135,7 +135,7 @@ public:
 
   slice<T> as_slice() { return slice<T>{begin(), end()}; }
 
-  void swap_with(array& other) { storage_.swap_with(other.storage_); }
+  void swap_with(vector& other) { storage_.swap_with(other.storage_); }
 
 private:
   void init_by_copy(T const* begin, T const* end) {
@@ -165,7 +165,7 @@ private:
     swap(back_, nb);
   }
 
-  friend void tag_invoke(tag<swap>, array& lhs, array& rhs) {
+  friend void tag_invoke(tag<swap>, vector& lhs, vector& rhs) {
     swap(lhs.storage_, rhs.storage_);
     swap(lhs.back_, rhs.back_);
   }
@@ -174,10 +174,10 @@ private:
   T* back_;
 };
 } // namespace array_
-using array_::array;
-template <typename T, typename... Ts> auto make_array(Ts&&... ts) -> array<T> {
+using array_::vector;
+template <typename T, typename... Ts> auto make_array(Ts&&... ts) -> vector<T> {
   constexpr usize n = sizeof...(Ts);
-  array<T> x;
+  vector<T> x;
   x.resize_uninitialized(n);
   usize i = 0;
   (construct_at<T>(x.begin() + (i++), forward<Ts>(ts)), ...);

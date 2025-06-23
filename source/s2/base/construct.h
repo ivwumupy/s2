@@ -1,11 +1,7 @@
 #pragma once
 
 #include "s2/base/move.h"
-
-#include "s2/base/allocator.h"
-
-//
-// #include <new> // IWYU pragma: keep
+#include "s2/base/placement_new.h" // IWYU pragma: keep
 
 namespace s2::base {
 template <typename T, typename... Args>
