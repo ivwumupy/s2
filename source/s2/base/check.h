@@ -8,3 +8,7 @@
       s2_panic("check `" #cond "` fails");                                     \
     }                                                                          \
   } while (0);
+
+namespace s2 {
+template <typename...> struct check_helper;
+}

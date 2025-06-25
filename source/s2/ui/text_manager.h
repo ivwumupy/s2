@@ -1,8 +1,8 @@
 #pragma once
 
-#include "s2/base/vector.h"
 #include "s2/base/basic_types.h"
-#include "s2/base/string_view.h"
+#include "s2/base/containers/vector.h"
+#include "s2/base/strings/string_view.h"
 #include "s2/ui/geometry.h"
 
 namespace s2::ui {
@@ -17,20 +17,20 @@ struct glyph_id {
 };
 class shaped_segment {
 private:
-  base::vector<glyph_id> glyphs_;
-  base::vector<point> positions_;
+  base::containers::vector<glyph_id> glyphs_;
+  base::containers::vector<point> positions_;
 };
 class shaped_line {
 public:
 private:
-  base::vector<shaped_segment> segments_;
+  base::containers::vector<shaped_segment> segments_;
 };
 class text_manager {
 public:
   virtual ~text_manager() = default;
   virtual font* default_font() = 0;
 
-  virtual shaped_line shape_line(base::string_view s) = 0;
+  virtual shaped_line shape_line(base::strings::string_view s) = 0;
 };
 } // namespace s2::ui
 

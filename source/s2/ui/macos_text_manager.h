@@ -25,7 +25,7 @@ public:
 
   font* default_font() override { return default_font_.get(); }
 
-  shaped_line shape_line(base::string_view s) override;
+  shaped_line shape_line(base::strings::string_view s) override;
 
 private:
   void create_default_font();

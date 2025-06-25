@@ -11,31 +11,30 @@
 #include "s2/base/swap.h"
 #include "s2/base/tag_invoke.h"
 
-namespace s2::base {
+namespace s2::base::containers {
 namespace internal {
-// It's not possible to grow an `array_storage`.
-template <typename T> class array_storage {
+// It's not possible to grow an `vector_storage`.
+template <typename T> class vector_storage {
 public:
-  constexpr array_storage() : begin_{nullptr}, end_{nullptr} {}
+  constexpr vector_storage() : begin_{nullptr}, end_{nullptr} {}
 
-  array_storage(usize capacity) {
-    void* ptr = default_allocator<T>{}.alloc_n(capacity);
-    begin_ = reinterpret_cast<T*>(ptr);
+  vector_storage(usize capacity) {
+    begin_ = default_allocator<T>{}.alloc_n(capacity);
     end_ = begin_ + capacity;
   }
 
-  array_storage(array_storage&& other)
+  vector_storage(vector_storage&& other)
       : begin_{other.begin_}, end_{other.end_} {
     other.begin_ = nullptr;
     other.end_ = nullptr;
   }
-  array_storage& operator=(array_storage&& other) {
-    array_storage tmp = move(other);
+  vector_storage& operator=(vector_storage&& other) {
+    vector_storage tmp = move(other);
     swap_with(tmp);
     return *this;
   }
 
-  ~array_storage() {
+  ~vector_storage() {
     if (!is_empty())
       release();
   }
@@ -49,7 +48,7 @@ public:
 
   bool is_empty() const { return begin_ == nullptr; }
 
-  void swap_with(array_storage& other) {
+  void swap_with(vector_storage& other) {
     swap(begin_, other.begin_);
     swap(end_, other.end_);
   }
@@ -61,13 +60,12 @@ private:
   T* end_;
 };
 } // namespace internal
-namespace array_ {
 template <typename T> class vector {
-  using storage_type = internal::array_storage<T>;
+  using storage_type = internal::vector_storage<T>;
 
 public:
   vector() : back_{nullptr} {}
-  vector([[maybe_unused]] initializer_list<T> l) { s2_panic("todo"); }
+  vector(initializer_list<T>) { s2_panic("todo"); }
 
   vector(vector const& other) { init_by_copy(other.begin(), other.end()); }
   vector& operator=(vector const& other) {
@@ -173,9 +171,8 @@ private:
   storage_type storage_;
   T* back_;
 };
-} // namespace array_
-using array_::vector;
-template <typename T, typename... Ts> auto make_array(Ts&&... ts) -> vector<T> {
+template <typename T, typename... Ts>
+auto make_vector(Ts&&... ts) -> vector<T> {
   constexpr usize n = sizeof...(Ts);
   vector<T> x;
   x.resize_uninitialized(n);
@@ -183,4 +180,4 @@ template <typename T, typename... Ts> auto make_array(Ts&&... ts) -> vector<T> {
   (construct_at<T>(x.begin() + (i++), forward<Ts>(ts)), ...);
   return x;
 }
-} // namespace s2::base
+} // namespace s2::base::containers

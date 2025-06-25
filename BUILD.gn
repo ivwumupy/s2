@@ -1,5 +1,7 @@
 group("gn_all") {
   deps = [
+    "//source/ng/gn/base",
+    "//source/ng/ninja",
     "//source/os",
     "//source/s2",
     "//source/s2/base:base_tests",

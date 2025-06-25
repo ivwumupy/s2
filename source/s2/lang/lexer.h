@@ -1,7 +1,7 @@
 #pragma once
 
-#include "s2/base/vector.h"
-#include "s2/base/string_view.h"
+#include "s2/base/containers/vector.h"
+#include "s2/base/strings/string_view.h"
 #include "s2/lang/token.h"
 
 namespace s2::lang {
@@ -30,7 +30,7 @@ public:
       advance();
     }
   }
-  auto try_eat(base::string_view s) -> bool;
+  auto try_eat(base::strings::string_view s) -> bool;
 
   auto lex() -> token;
   auto lex_ident_or_kw() -> token;
@@ -51,7 +51,7 @@ public:
     char const* start = current_start_;
     char const* end = cur_;
     current_start_ = cur_;
-    return {kind, base::string_view{start, end}};
+    return {kind, base::strings::string_view{start, end}};
   }
 
 private:
@@ -62,6 +62,6 @@ private:
   char const* end_;
   // start of the current token
   char const* current_start_;
-  base::vector<token> toks_;
+  base::containers::vector<token> toks_;
 };
 } // namespace s2::lang

@@ -7,14 +7,16 @@
 namespace s2::base {
 template <typename T> class slice {
 public:
-  slice(T* begin, T* end) : begin_{begin}, end_{end} {}
+  constexpr slice(T* begin, T* end) : begin_{begin}, end_{end} {}
 
-  auto count() const -> usize { return checked_convert<usize>(end_ - begin_); }
+  constexpr auto count() const -> usize {
+    return checked_convert<usize>(end_ - begin_);
+  }
 
-  auto begin() -> T* { return begin_; }
-  auto begin() const -> T const* { return begin_; }
-  auto end() -> T* { return end_; }
-  auto end() const -> T const* { return end_; }
+  constexpr auto begin() -> T* { return begin_; }
+  constexpr auto begin() const -> T const* { return begin_; }
+  constexpr auto end() -> T* { return end_; }
+  constexpr auto end() const -> T const* { return end_; }
 
   auto operator[](usize i) -> T& {
     s2_check(begin_ + i < end_);

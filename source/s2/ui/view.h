@@ -1,7 +1,7 @@
 #pragma once
 
 #include "s2/base/allocator.h"
-#include "s2/base/vector.h"
+#include "s2/base/containers/vector.h"
 #include "s2/base/construct.h"
 #include "s2/base/move.h"
 #include "s2/base/type_utils.h"
@@ -40,6 +40,6 @@ public:
 private:
   rect bounds_;
   view* parent_ = nullptr;
-  base::vector<view*> children_;
+  base::containers::vector<view*> children_;
 };
 } // namespace s2::ui

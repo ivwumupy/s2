@@ -10,8 +10,8 @@ public:
   green_node* children[1];
 };
 } // namespace
-green_node::green_node(
-  syntax_kind k, base::string_view t, base::slice<green_node*> children)
+green_node::green_node(syntax_kind k, base::strings::string_view t,
+  base::slice<green_node*> children)
     : green_node(k, t) {
   init_children(children);
 }

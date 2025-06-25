@@ -14,7 +14,7 @@ auto is_ident_body(char c) {
 }
 } // namespace
 
-auto lexer::try_eat(base::string_view s) -> bool {
+auto lexer::try_eat(base::strings::string_view s) -> bool {
   if (cur_ + s.length() > end_)
     return false;
   if (memcmp(cur_, s.data(), s.length()) != 0)

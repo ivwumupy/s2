@@ -3,7 +3,7 @@
 #include "s2/base/basic_types.h"
 #include "s2/base/checked_convert.h"
 
-namespace s2::base {
+namespace s2::base::strings {
 namespace internal {
 inline constexpr usize strlen(char const* s) { return __builtin_strlen(s); }
 } // namespace internal
@@ -48,4 +48,4 @@ inline constexpr string_view operator""_sv(char const* begin, usize len) {
   return string_view(begin, len);
 }
 } // namespace literals
-} // namespace s2::base
+} // namespace s2::base::strings

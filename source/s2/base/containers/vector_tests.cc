@@ -1,12 +1,11 @@
-#include "s2/base/vector.h"
 #include "s2/base/checked_convert.h"
+#include "s2/base/containers/vector.h"
 #include "s2/test/expects.h"
 #include "s2/test/test_case.h"
 
-using namespace s2::base;
-using s2::test::test_case;
-
+namespace s2::base::containers {
 namespace {
+using s2::test::test_case;
 test_case basics{[] {
   vector<int> x;
   s2_expect_eq(x.count(), 0);
@@ -20,13 +19,13 @@ test_case grow{[] {
     s2_expect_eq(x[checked_convert<usize>(i)], i);
 }};
 test_case make{[] {
-  auto x = make_array<int>(1, 2, 3, 4, 5);
+  auto x = make_vector<int>(1, 2, 3, 4, 5);
   s2_expect_eq(x.count(), 5);
   for (int i = 0; i < 5; i++)
     s2_expect_eq(x[checked_convert<usize>(i)], i + 1);
 }};
 test_case pop{[] {
-  auto x = make_array<int>(1, 2, 3, 4, 5);
+  auto x = make_vector<int>(1, 2, 3, 4, 5);
   s2_expect_eq(x.count(), 5);
   x.pop();
   s2_expect_eq(x.count(), 4);
@@ -40,3 +39,4 @@ test_case pop{[] {
   s2_expect_eq(x.count(), 0);
 }};
 } // namespace
+} // namespace s2::base::containers

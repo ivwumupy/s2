@@ -1,4 +1,4 @@
-#include "s2/base/string_view.h"
+#include "s2/base/strings/string_view.h"
 #include "s2/lang/lexer.h"
 #include "s2/test/expects.h"
 #include "s2/test/test_case.h"
@@ -7,14 +7,14 @@ namespace s2 {
 namespace {
 using namespace lang;
 using test::test_case;
-auto check_one(base::string_view source, syntax_kind kind, usize len) {
+auto check_one(base::strings::string_view source, syntax_kind kind, usize len) {
   lexer l(source.begin(), source.end());
   auto tok = l.lex();
   s2_expect_eq(tok.kind, kind);
   s2_expect_eq(tok.text.length(), len);
 }
 auto check_list(
-  base::string_view source, base::initializer_list<syntax_kind> ks) {
+  base::strings::string_view source, base::initializer_list<syntax_kind> ks) {
   lexer l(source.begin(), source.end());
   for (auto k : ks) {
     auto tok = l.lex();

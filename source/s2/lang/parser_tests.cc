@@ -7,9 +7,10 @@ namespace s2 {
 namespace {
 using namespace lang;
 using test::test_case;
-auto lex_all(base::string_view source) -> base::vector<token> {
+auto lex_all(base::strings::string_view source)
+  -> base::containers::vector<token> {
   lexer l{source.begin(), source.end()};
-  base::vector<token> result;
+  base::containers::vector<token> result;
   while (true) {
     token tok = l.lex();
     result.construct_back(tok);

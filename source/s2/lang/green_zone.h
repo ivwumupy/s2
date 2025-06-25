@@ -5,6 +5,7 @@
 #include "s2/base/construct.h"
 #include "s2/base/panic.h"
 #include "s2/base/slice.h"
+#include "s2/base/strings/string_view.h"
 #include "s2/lang/green_node.h"
 
 namespace s2::lang {
@@ -22,12 +23,13 @@ public:
       base::default_allocator<base::byte>{}.free_n(current_page_, page_size);
   }
 
-  auto make_leaf(syntax_kind kind, base::string_view text) -> green_node* {
+  auto make_leaf(syntax_kind kind, base::strings::string_view text)
+    -> green_node* {
     auto p = alloc(sizeof(green_node));
     return base::construct_at<green_node>(p, kind, text);
   }
 
-  auto make_node(syntax_kind kind, base::string_view text,
+  auto make_node(syntax_kind kind, base::strings::string_view text,
     base::slice<green_node*> children) -> green_node* {
     auto size = sizeof(green_node) + 8 + 8 * children.count();
     auto p = alloc(size);

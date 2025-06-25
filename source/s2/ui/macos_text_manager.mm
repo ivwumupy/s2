@@ -18,8 +18,8 @@ void macos_text_manager::create_default_font() {
   auto f = CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, 0.0, nullptr);
   default_font_ = base::make_unique<macos_font>(f);
 }
-shaped_line
-macos_text_manager::shape_line([[maybe_unused]] base::string_view s) {
+shaped_line macos_text_manager::shape_line(
+  [[maybe_unused]] base::strings::string_view s) {
   return shaped_line{};
 }
 } // namespace s2::ui

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "s2/base/vector.h"
+#include "s2/base/containers/vector.h"
 #include "s2/lang/green_zone.h"
 #include "s2/lang/token.h"
 
@@ -24,7 +24,7 @@ public:
     auto p = parents_[parents_.count() - 1];
     parents_.pop();
     base::slice<green_node*> c{children_.begin() + p.offset, children_.end()};
-    base::string_view t{nullptr, nullptr};
+    base::strings::string_view t{nullptr, nullptr};
     if (c.count() > 0)
       t = {c[0]->text().begin(), c[c.count() - 1]->text().end()};
     // auto n = zone_->make_node(p.kind, t, c);
@@ -42,8 +42,8 @@ private:
     usize offset;
   };
   green_zone* zone_;
-  base::vector<partial_node> parents_;
-  base::vector<green_node*> children_;
+  base::containers::vector<partial_node> parents_;
+  base::containers::vector<green_node*> children_;
 };
 
 } // namespace s2::lang
