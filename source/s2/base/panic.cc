@@ -12,13 +12,13 @@
 #endif
 
 namespace s2::base::internal {
-void panic(char const* msg, char const* file, unsigned int line) {
+void panic(char const* msg, char const* file, usize line) {
   fprintf(stderr,
-          "====[ PANIC ]====\n"
-          "message: %s\n"
-          "location: %s:%d\n"
-          "backtrace:\n",
-          msg, file, line);
+    "====[ PANIC ]====\n"
+    "message: %s\n"
+    "location: %s:%lu\n"
+    "backtrace:\n",
+    msg, file, line);
   print_backtrace();
 #if defined(S2_PLATFORM_CLANG)
   __builtin_trap();

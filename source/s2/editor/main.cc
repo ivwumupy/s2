@@ -201,5 +201,11 @@
 // // }
 // } // namespace
 // } // namespace s2
+//
 
-int main() { return 0; }
+#include "s2/base/console.h"
+
+int main() {
+  s2::base::console::instance()->write_line("hello, editor");
+  return 0;
+}

@@ -93,7 +93,7 @@ public:
   }
 
   auto pop() -> void {
-    s2_check(count() > 0);
+    check(count() > 0);
     auto p = back_ - 1;
     destruct_at(p);
     back_--;
@@ -128,6 +128,9 @@ public:
     ensure_capacity(n);
     set_count(n);
   }
+
+  auto data() -> T* { return storage_.begin(); }
+  auto data() const -> T const* { return storage_.begin(); }
 
   usize size_in_bytes() const { return count() * sizeof(T); }
 

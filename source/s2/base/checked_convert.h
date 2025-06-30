@@ -19,8 +19,8 @@ template <typename T, typename U> constexpr bool safe_less_equal(T t, U u) {
 } // namespace internal
 // for numeric types only
 template <typename To, typename From> constexpr To checked_convert(From v) {
-  s2_check(internal::safe_less_equal(v, numeric_limits<To>::max));
-  s2_check(internal::safe_less_equal(numeric_limits<To>::min, v));
+  check(internal::safe_less_equal(v, numeric_limits<To>::max));
+  check(internal::safe_less_equal(numeric_limits<To>::min, v));
   return static_cast<To>(v);
 }
 } // namespace s2::base

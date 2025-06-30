@@ -12,7 +12,7 @@ source_set("ui") {
   sources = [
     "application.cc",
     "draw_batch.cc",
-    "view.cc",
+    "views/view.cc",
   ] + [
     "macos_application.mm",
     "macos_render_manager.mm",

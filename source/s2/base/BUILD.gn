@@ -4,6 +4,7 @@ source_set("base") {
   sources = [
     "allocator.cc",
     "backtrace.cc",
+    "console.cc",
     "panic.cc",
   ]
 }
@@ -14,6 +15,7 @@ test("base_tests") {
     "containers/array_tests.cc",
     "containers/hash_map_tests.cc",
     "containers/vector_tests.cc",
+    "strings/string_tests.cc",
     "strings/string_view_tests.cc",
   ]
   deps = [

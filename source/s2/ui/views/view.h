@@ -1,14 +1,15 @@
 #pragma once
 
 #include "s2/base/allocator.h"
-#include "s2/base/containers/vector.h"
 #include "s2/base/construct.h"
+#include "s2/base/containers/vector.h"
 #include "s2/base/move.h"
+#include "s2/base/pointers/raw_ptr.h"
 #include "s2/base/type_utils.h"
 #include "s2/ui/draw_list.h"
 #include "s2/ui/geometry.h"
 
-namespace s2::ui {
+namespace s2::ui::views {
 struct size_proposal {};
 class view {
 public:
@@ -24,8 +25,8 @@ public:
 
   rect& bounds() { return bounds_; }
 
-  view* parent() { return parent_; }
-  void set_parent(view* p) { parent_ = p; }
+  auto parent() -> base::pointers::raw_ptr<view> { return parent_; }
+  auto set_parent(view* p) -> void { parent_ = p; }
 
   void add_child(view* child) { children_.construct_back(child); }
 
@@ -39,7 +40,7 @@ public:
 
 private:
   rect bounds_;
-  view* parent_ = nullptr;
+  base::pointers::raw_ptr<view> parent_ = nullptr;
   base::containers::vector<view*> children_;
 };
-} // namespace s2::ui
+} // namespace s2::ui::views

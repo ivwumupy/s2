@@ -1,6 +1,6 @@
 #pragma once
 
-#include "s2/ui/view.h"
+#include "s2/ui/views/view.h"
 
 #define s2_view_builder_begin(name)                                            \
   struct name##_builder {                                                      \
