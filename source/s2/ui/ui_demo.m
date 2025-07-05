@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -200,21 +201,46 @@ void init_metal(struct app_context* ctx) {
   ctx->pass_desc.colorAttachments[0].clearColor = MTLClearColorMake(0, 1, 1, 1);
 }
 
+enum {
+  CMD_CIRCLE,
+  CMD_SEGMENT,
+};
+
 void render(struct app_context* ctx) {
   id<MTLCommandBuffer> cmdbuf = [ctx->queue commandBuffer];
   ctx->pass_desc.colorAttachments[0].texture = ctx->drawable.texture;
-  CGSize drawable_size = ctx->metal_layer.drawableSize;
+  // CGSize drawable_size = ctx->metal_layer.drawableSize;
   struct {
-    float viewport_size[2];
-  } uniform_data = {(float)drawable_size.width, (float)drawable_size.height};
+    // float viewport_size[2];
+    uint32_t cmd_count;
+  } uniform_data = {
+    //{(float)drawable_size.width, (float)drawable_size.height},
+    2,
+  };
   // printf("size: %.2f, %.2f\n", uniform_data.viewport_size[0],
   //   uniform_data.viewport_size[1]);
+
+  uint8_t cmds[] = {
+    CMD_CIRCLE,
+    CMD_SEGMENT,
+  };
+  float data[] = {
+    // circle
+    100.0, 100.0, // center
+    20.0,         // radius
+    // segment
+    200.0, 100.0, // start
+    200.0, 300.0, // end
+  };
+
   id<MTLRenderCommandEncoder> encoder =
     [cmdbuf renderCommandEncoderWithDescriptor:ctx->pass_desc];
   [encoder setRenderPipelineState:ctx->sdf_pipeline];
   [encoder setFragmentBytes:&uniform_data
                      length:sizeof(uniform_data)
                     atIndex:0];
+  [encoder setFragmentBytes:cmds length:sizeof(cmds) atIndex:1];
+  [encoder setFragmentBytes:data length:sizeof(data) atIndex:2];
 
   // we use one triangle
   [encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
