@@ -20,6 +20,7 @@ config("basics") {
 
   cflags += [ "-O0" ]
 
+  cflags += [ "-std=c11" ]
   cflags_cc += [ "-std=c++26" ]
   cflags_objcc += [ "-std=c++26" ]
 

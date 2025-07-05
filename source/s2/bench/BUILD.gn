@@ -1,7 +1,0 @@
-source_set("bench") {
-  sources = []
-}
-
-executable("dummy_bench") {
-  sources = [ "dummy_bench.cc" ]
-}

@@ -1,22 +1,11 @@
-import("//build/test.gni")
-
 source_set("base") {
   sources = [
-    "allocator.cc",
-    "backtrace.cc",
-    "console.cc",
-    "panic.cc",
+    "panic.c",
   ]
 }
-
-test("base_tests") {
+executable("panic_demo") {
   sources = [
-    "allocator_tests.cc",
-    "containers/array_tests.cc",
-    "containers/hash_map_tests.cc",
-    "containers/vector_tests.cc",
-    "strings/string_tests.cc",
-    "strings/string_view_tests.cc",
+    "panic_demo.c",
   ]
   deps = [
     ":base",

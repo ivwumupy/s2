@@ -1,9 +1,5 @@
 #pragma once
 
-#include "s2/base/basic_types.h"
+#define sb_panic_here() sb_panic(__FILE__, __LINE__)
 
-#define s2_panic(msg) ::s2::base::internal::panic(msg, __FILE__, __LINE__)
-
-namespace s2::base::internal {
-[[noreturn]] void panic(char const* msg, char const* file, usize line);
-}
+void sb_panic(char const* file, int line) __attribute__((noreturn));

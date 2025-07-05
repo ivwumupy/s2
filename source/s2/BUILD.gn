@@ -1,11 +1,6 @@
 static_library("s2") {
   deps = [
     "//source/s2/base",
-    "//source/s2/platform/macos/dispatch",
-    "//source/s2/platform/macos/foundation",
-    "//source/s2/platform/macos/metal",
-    "//source/s2/platform/macos/objc",
-    "//source/s2/platform/posix/pthread",
-    "//source/s2/ui",
+    "//source/s2/ui:ui_demo",
   ]
 }

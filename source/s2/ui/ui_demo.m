@@ -1,0 +1,236 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+//
+#import <AppKit/AppKit.h>
+#import <Metal/Metal.h>
+#import <QuartzCore/QuartzCore.h>
+#include <dispatch/dispatch.h>
+
+#include "s2/base/panic.h"
+#include "s2/ui/shaders.h"
+
+#define CHECK(cond)                                                            \
+  do {                                                                         \
+    if (!(cond)) {                                                             \
+      sb_panic_here();                                                         \
+    }                                                                          \
+  } while (0);
+
+@interface AppDelegate : NSObject <NSApplicationDelegate>
+@end
+
+@interface WindowDelegate : NSObject <NSWindowDelegate>
+@end
+
+@interface MetalView : NSView <CAMetalDisplayLinkDelegate>
+@end
+
+struct app_context {
+  NSApplication* app;
+  NSWindow* win;
+  CAMetalLayer* metal_layer;
+  CAMetalDisplayLink* display_link;
+  id<CAMetalDrawable> drawable;
+  float width;
+  float height;
+  // Metal
+  id<MTLDevice> device;
+  id<MTLCommandQueue> queue;
+  id<MTLLibrary> shaders;
+  id<MTLRenderPipelineState> sdf_pipeline;
+  id<MTLFunction> sdf_vert;
+  id<MTLFunction> sdf_frag;
+  MTLRenderPassDescriptor* pass_desc;
+};
+
+void render(struct app_context* ctx);
+
+@implementation AppDelegate
+- (bool)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)sender {
+  return true;
+}
+@end
+
+@implementation WindowDelegate
+@end
+
+@implementation MetalView {
+  struct app_context* app;
+}
+- (instancetype)init_with_c:(struct app_context*)c {
+  self = [super init];
+  if (self) {
+    app = c;
+  }
+  return self;
+}
+// CAMetalDisplayLinkDelegate
+- (void)metalDisplayLink:(CAMetalDisplayLink*)link
+             needsUpdate:(CAMetalDisplayLinkUpdate*)update {
+  app->drawable = update.drawable;
+  render(app);
+}
+- (void)viewDidMoveToWindow {
+  [super viewDidMoveToWindow];
+  [self setup_display_link];
+}
+// Override all methods that indicate the view's size has changed.
+- (void)viewDidChangeBackingProperties {
+  [super viewDidChangeBackingProperties];
+  [self resize_drawable];
+}
+- (void)setFrameSize:(NSSize)newSize {
+  [super setFrameSize:newSize];
+  [self resize_drawable];
+}
+- (void)setBoundsSize:(NSSize)newSize {
+  [super setBoundsSize:newSize];
+  [self resize_drawable];
+}
+- (void)resize_drawable {
+  double scale = [app->win backingScaleFactor];
+  app->width = (float)app->win.contentView.bounds.size.width;
+  app->height = (float)app->win.contentView.bounds.size.height;
+  // app->height = (float)app->win.frame.size.height;
+  CGSize new_size = CGSizeMake(app->width * scale, app->height * scale);
+  if (new_size.width <= 0 || new_size.height <= 0)
+    return;
+  if (new_size.width == app->metal_layer.drawableSize.width &&
+      new_size.height == app->metal_layer.drawableSize.height)
+    return;
+  app->metal_layer.drawableSize = new_size;
+}
+- (void)setup_display_link {
+  if (app->display_link) {
+    [app->display_link invalidate];
+    [app->display_link release];
+  }
+  app->display_link =
+    [[CAMetalDisplayLink alloc] initWithMetalLayer:app->metal_layer];
+  app->display_link.preferredFrameRateRange =
+    CAFrameRateRangeMake(30.0, 60.0, 60.0);
+  app->display_link.preferredFrameLatency = 2.0;
+  app->display_link.paused = false;
+  app->display_link.delegate = self;
+  [app->display_link addToRunLoop:[NSRunLoop mainRunLoop]
+                          forMode:NSRunLoopCommonModes];
+  printf("display link added\n");
+}
+@end
+
+void init_app(struct app_context* ctx) {
+  // init NSApplication
+  ctx->app = [NSApplication sharedApplication];
+  [ctx->app setActivationPolicy:NSApplicationActivationPolicyRegular];
+  ctx->win = NULL;
+  ctx->app.delegate = [[AppDelegate alloc] init];
+  // init NSWindow
+  NSScreen* screen = [NSScreen mainScreen];
+  NSWindowStyleMask style =
+    NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable |
+    NSWindowStyleMaskResizable | NSWindowStyleMaskTitled;
+  NSRect rect = NSMakeRect(0, 0, ctx->width, ctx->height);
+  // center the window
+  rect.origin.x = (screen.frame.size.width - ctx->width) / 2;
+  rect.origin.y = (screen.frame.size.height - ctx->height) / 2;
+  ctx->win = [[NSWindow alloc] initWithContentRect:rect
+                                         styleMask:style
+                                           backing:NSBackingStoreBuffered
+                                             defer:NO
+                                            screen:screen];
+  ctx->win.minSize = NSMakeSize(200, 200);
+  [ctx->win setTitle:@"UI Demo"];
+  // init CAMetalLayer
+  ctx->metal_layer = [CAMetalLayer layer];
+  // texture writes automatically have a linear->srgb transform
+  ctx->metal_layer.pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+  // w->metal_layer.drawableSize = CGSizeMake(2 * w->width, 2 * w->height);
+  // init NSView
+  MetalView* view = [[MetalView alloc] init_with_c:ctx];
+  view.layer = ctx->metal_layer;
+  view.wantsLayer = true;
+  ctx->win.contentView = view;
+  // show
+  [ctx->win makeKeyAndOrderFront:nil];
+}
+
+void init_metal(struct app_context* ctx) {
+  NSError* error = NULL;
+
+  // device and queue
+  ctx->device = MTLCreateSystemDefaultDevice();
+  ctx->queue = [ctx->device newCommandQueue];
+
+  // shader library
+  dispatch_data_t shaders_data =
+    dispatch_data_create(metal_shaders, sizeof(metal_shaders),
+      dispatch_get_main_queue(), DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+  ctx->shaders = [ctx->device newLibraryWithData:shaders_data error:&error];
+  CHECK(!error);
+  dispatch_release(shaders_data);
+
+  // shader functions
+  ctx->sdf_vert = [ctx->shaders newFunctionWithName:@"sdf_vert"];
+  ctx->sdf_frag = [ctx->shaders newFunctionWithName:@"sdf_frag"];
+
+  // sdf pipeline
+  MTLRenderPipelineDescriptor* ppl_desc =
+    [[MTLRenderPipelineDescriptor alloc] init];
+  ppl_desc.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+  ppl_desc.vertexFunction = ctx->sdf_vert;
+  ppl_desc.fragmentFunction = ctx->sdf_frag;
+  ctx->sdf_pipeline = [ctx->device newRenderPipelineStateWithDescriptor:ppl_desc
+                                                                  error:&error];
+  CHECK(!error);
+
+  [ppl_desc release];
+
+  // setup window
+  // `metalDisplayLink:needsUpdate` is called only if the metal layer is
+  // configured.
+  ctx->metal_layer.device = ctx->device;
+
+  // render pass
+  ctx->pass_desc = [[MTLRenderPassDescriptor alloc] init];
+  ctx->pass_desc.colorAttachments[0].loadAction = MTLLoadActionClear;
+  ctx->pass_desc.colorAttachments[0].storeAction = MTLStoreActionStore;
+  ctx->pass_desc.colorAttachments[0].clearColor = MTLClearColorMake(0, 1, 1, 1);
+}
+
+void render(struct app_context* ctx) {
+  id<MTLCommandBuffer> cmdbuf = [ctx->queue commandBuffer];
+  ctx->pass_desc.colorAttachments[0].texture = ctx->drawable.texture;
+  CGSize drawable_size = ctx->metal_layer.drawableSize;
+  struct {
+    float viewport_size[2];
+  } uniform_data = {(float)drawable_size.width, (float)drawable_size.height};
+  // printf("size: %.2f, %.2f\n", uniform_data.viewport_size[0],
+  //   uniform_data.viewport_size[1]);
+  id<MTLRenderCommandEncoder> encoder =
+    [cmdbuf renderCommandEncoderWithDescriptor:ctx->pass_desc];
+  [encoder setRenderPipelineState:ctx->sdf_pipeline];
+  [encoder setFragmentBytes:&uniform_data
+                     length:sizeof(uniform_data)
+                    atIndex:0];
+
+  // we use one triangle
+  [encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
+
+  [encoder endEncoding];
+  [cmdbuf presentDrawable:ctx->drawable];
+  [cmdbuf commit];
+}
+
+int main(void) {
+  struct app_context app;
+  memset(&app, 0, sizeof(app));
+  app.width = 500;
+  app.height = 500;
+  init_app(&app);
+  init_metal(&app);
+  [app.app run];
+  return 0;
+}

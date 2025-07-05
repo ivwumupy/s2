@@ -1,4 +1,0 @@
-# Platform Wrappers
-
-- Thin
-- Exact

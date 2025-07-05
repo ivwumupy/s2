@@ -1,8 +1,0 @@
-source_set("foundation") {
-  sources = [
-    "autorelease_pool.cc",
-    "classes.cc",
-    "selectors.cc",
-    "string.cc",
-  ]
-}
