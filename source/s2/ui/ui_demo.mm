@@ -6,12 +6,16 @@
 
 //
 #import <AppKit/AppKit.h>
+#include <CoreText/CoreText.h>
 #import <Metal/Metal.h>
 #import <QuartzCore/QuartzCore.h>
 #include <dispatch/dispatch.h>
 
+#include "s2/base/expected.h"
 #include "s2/base/panic.h"
 #include "s2/ui/shaders.h"
+
+#include <vector>
 
 #define CHECK(cond)                                                            \
   do {                                                                         \
@@ -45,6 +49,7 @@ struct app_context {
   id<MTLFunction> sdf_vert;
   id<MTLFunction> sdf_frag;
   MTLRenderPassDescriptor* pass_desc;
+  CTFontRef font;
 };
 
 void render(struct app_context* ctx);
@@ -199,11 +204,58 @@ void init_metal(struct app_context* ctx) {
   ctx->pass_desc.colorAttachments[0].loadAction = MTLLoadActionClear;
   ctx->pass_desc.colorAttachments[0].storeAction = MTLStoreActionStore;
   ctx->pass_desc.colorAttachments[0].clearColor = MTLClearColorMake(0, 1, 1, 1);
+
+  // font
+  auto name = CFStringCreateWithCString(
+    kCFAllocatorDefault, "Times New Roman", kCFStringEncodingUTF8);
+  ctx->font = CTFontCreateWithName(name, 20, nullptr);
+  CFRelease(name);
 }
+
+struct float2 {
+  float x;
+  float y;
+};
 
 enum {
   CMD_CIRCLE,
   CMD_SEGMENT,
+  CMD_RECT,
+};
+
+struct scene {
+  std::vector<uint8_t> cmds;
+  std::vector<float> data;
+  void add_circle(float2 center, float radius, uint32_t color) {
+    cmds.push_back(CMD_CIRCLE);
+    push_data(center);
+    push_data(radius);
+    push_data(color);
+  }
+  void add_segment(float2 start, float2 end, uint32_t color) {
+    cmds.push_back(CMD_SEGMENT);
+    push_data(start);
+    push_data(end);
+    push_data(color);
+  }
+  void add_rect(float2 origin, float2 size, uint32_t color) {
+    cmds.push_back(CMD_RECT);
+    push_data(origin);
+    push_data(size);
+    push_data(color);
+  }
+
+  void push_data(float x) { data.push_back(x); }
+  void push_data(float2 p) {
+    data.push_back(p.x);
+    data.push_back(p.y);
+  }
+  void push_data(uint32_t c) {
+    float x;
+    static_assert(sizeof(x) == sizeof(c));
+    __builtin_memcpy(&x, &c, sizeof(c));
+    data.push_back(x);
+  }
 };
 
 void render(struct app_context* ctx) {
@@ -258,5 +310,8 @@ int main(void) {
   init_app(&app);
   init_metal(&app);
   [app.app run];
+  s2::base::unexpected x{3};
+  s2::base::unexpected y{2};
+  y = x;
   return 0;
 }

@@ -2,5 +2,5 @@ PointerAlignment: Left
 AlignAfterOpenBracket: DontAlign
 ContinuationIndentWidth: 2
 BracedInitializerIndentWidth: 2
-MacroBlockBegin: "s2_view_builder_begin"
-MacroBlockEnd: "s2_view_builder_end"
+#MacroBlockBegin: "s2_view_builder_begin"
+#MacroBlockEnd: "s2_view_builder_end"

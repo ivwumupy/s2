@@ -1,0 +1,6 @@
+[
+  {
+    "label": "Build",
+    "command": "ninja -C $ZED_WORKTREE_ROOT/out"
+  }
+]

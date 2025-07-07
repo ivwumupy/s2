@@ -1,6 +1,7 @@
 #include <stdio.h>
 
-void sb_panic(char const* file, int line) {
+namespace s2::base {
+void panic(char const* file, int line) {
   fprintf(stderr,
     "==== panic ====\n"
     "file: %s\n"
@@ -8,3 +9,4 @@ void sb_panic(char const* file, int line) {
     file, line);
   __builtin_trap();
 }
+} // namespace s2::base

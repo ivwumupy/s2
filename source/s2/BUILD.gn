@@ -1,6 +1,5 @@
 static_library("s2") {
   deps = [
     "//source/s2/base",
-    "//source/s2/ui:ui_demo",
   ]
 }

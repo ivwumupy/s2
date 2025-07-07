@@ -10,7 +10,7 @@ action("metal_shaders_h") {
 
 executable("ui_demo") {
   sources = [
-    "ui_demo.m",
+    "ui_demo.mm",
   ]
   deps = [
     "//source/s2/base",

@@ -1,11 +1,11 @@
 source_set("base") {
   sources = [
-    "panic.c",
+    "panic.cc",
   ]
 }
 executable("panic_demo") {
   sources = [
-    "panic_demo.c",
+    "panic_demo.cc",
   ]
   deps = [
     ":base",
