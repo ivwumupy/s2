@@ -20,7 +20,7 @@
 #define CHECK(cond)                                                            \
   do {                                                                         \
     if (!(cond)) {                                                             \
-      sb_panic_here();                                                         \
+      s2_panic_here();                                                         \
     }                                                                          \
   } while (0);
 

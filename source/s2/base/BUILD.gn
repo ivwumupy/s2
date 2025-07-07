@@ -1,5 +1,6 @@
 source_set("base") {
   sources = [
+    "console.cc",
     "panic.cc",
   ]
 }

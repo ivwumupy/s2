@@ -8,7 +8,9 @@ template <typename E> class unexpected {
 public:
   // TODO: U is not unexpected or in_place, and can construct E
   template <typename U>
-  constexpr explicit unexpected(U&& u) : error_{forward<U>(u)} {}
+  constexpr explicit unexpected(U&& u)
+    requires(constructible_from<E, U>)
+      : error_{forward<U>(u)} {}
 
   constexpr auto error() & -> E& { return error_; }
   constexpr auto error() const& -> E const& { return error_; }
@@ -28,17 +30,24 @@ public:
 
   constexpr ~expected() {
     if (has_value_) {
-      if constexpr (!trivially_destructible<T>) {
-        value_.~T();
-      }
+      destruct_value();
     } else {
-      if constexpr (!trivially_destructible<E>) {
-        error_.~E();
-      }
+      destruct_error();
     }
   }
 
 private:
+  constexpr auto destruct_value() -> void {
+    if constexpr (!trivially_destructible<T>) {
+      value_.~T();
+    }
+  }
+  constexpr auto destruct_error() -> void {
+    if constexpr (!trivially_destructible<E>) {
+      error_.~E();
+    }
+  }
+
   T value_;
   E error_;
   bool has_value_;
