@@ -3,6 +3,11 @@
 #include "s2/base/string_view.h"
 
 namespace s2::base {
+// buffered output to stdout
+//
+// warning: the buffer is not flushed when panic
+//
+// the implementation can panic, so we cannot flush the buffer in panic()
 class console {
 public:
   static auto instance() -> console&;

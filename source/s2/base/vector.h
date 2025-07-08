@@ -3,26 +3,40 @@
 #include "s2/base/integers.h"
 
 namespace s2::base {
+namespace detail {
+template <typename T> class vector_value {
+public:
+  constexpr vector_value() : first_{}, last_{}, end_{} {}
+  constexpr vector_value(T* first, T* last, T* end)
+      : first_{first}, last_{last}, end_{end} {}
+
+private:
+  T* first_;
+  T* last_;
+  T* end_;
+};
+} // namespace detail
 template <typename T> class vector {
 public:
-  vector();
+  constexpr vector() : val_{} {}
 
-  vector(vector const&);
-  vector& operator=(vector const&);
-  vector(vector&&);
-  vector& operator=(vector&&);
+  constexpr vector(vector const&);
+  constexpr vector& operator=(vector const&);
+  constexpr vector(vector&&);
+  constexpr vector& operator=(vector&&);
 
   ~vector();
 
-  void push(T const&);
-  template <typename... Args> void emplace(Args&&... args);
-  void append(vector const&);
+  constexpr void push(T const&);
+  template <typename... Args> constexpr void emplace(Args&&... args);
+  constexpr void append(vector const&);
 
-  void pop();
+  constexpr void pop();
 
-  T& operator[](usize i);
-  T const& operator[](usize i) const;
+  constexpr T& operator[](usize i);
+  constexpr T const& operator[](usize i) const;
 
 private:
+  detail::vector_value<T> val_;
 };
 } // namespace s2::base

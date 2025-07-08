@@ -1,9 +1,0 @@
-executable("os") {
-  sources = [
-    "main.mm",
-  ]
-  frameworks = [
-    "Foundation.framework",
-    "Virtualization.framework",
-  ]
-}
