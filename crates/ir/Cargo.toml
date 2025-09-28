@@ -1,0 +1,5 @@
+[package]
+name = "ir"
+edition.workspace = true
+version.workspace = true
+authors.workspace = true
